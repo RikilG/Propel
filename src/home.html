@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link rel="stylesheet" href="css/home.css" />
+    <link rel="stylesheet" href="css/sidebar.css" />
+    <link rel="stylesheet" href="css/navbar.css" />
+</head>
+<body>
+     <!-- The sidebar -->
+    <div id="iSideBar" class="sidebar">
+        <div class="user-info">UserName</div>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
+        <a class="active" href="#home">Scheduler</a>
+        <a href="#notes">Notes</a>
+        <a href="#diaries">Diaries</a>
+        <a href="#about">About</a>
+        <a class="sidebar-settings" href="#settings">Settings</a>
+    </div>
+
+    <!-- The navbar. add side-push in class for sidebar push animation-->
+    <div id="iNavBar" class="navbar side-push">
+        <span onclick="openSidebar()"><img class="menu-icon" src="icons/menu.png" /></span>
+        <span class="nav-title">ProPl</span>
+        <span class="nav-heading">Scheduler</span>
+        <span class="nav-end">
+            <span class="nav-item">Hello</span>
+            <span class="nav-item">World</span>
+            <span class="nav-item nav-status">Online/UserName</span>
+        </span>
+    </div>
+
+    <!-- Page content. add side-push in class for sidebar push animation-->
+    <div class="content side-push">
+        <div class="root-container">
+            <div class="root-item">
+                <div class="calendar-instance">
+                    <span class="calendar-month">March</span>
+                    <span class="calendar-year">2020</span>
+                </div>
+                <div class="calendar-container">
+                    <div class="calendar-header">Sun</div>
+                    <div class="calendar-header">Mon</div>
+                    <div class="calendar-header">Tue</div>
+                    <div class="calendar-header">Wed</div>
+                    <div class="calendar-header">Thu</div>
+                    <div class="calendar-header">Fri</div>
+                    <div class="calendar-header">Sat</div>
+                </div>
+            </div>
+            <div class="root-item info-container">
+                <h1 id="today">Today is </h1>
+                <h2>ToDo</h2>
+                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+            </div>
+        </div>
+    </div> 
+    
+    <!-- Load home.html scripts -->
+    <script src="scripts/home.js"></script>
+</body>
+</html>

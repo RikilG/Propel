@@ -1,0 +1,66 @@
+.root-container {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+    align-items: flex-start;
+}
+
+.root-container .root-item {
+    margin: 10px;
+}
+
+.calendar-instance {
+    text-align: center;
+}
+
+.calendar-month, 
+.calendar-year {
+    margin: 5px;
+    font-size: 24px;
+    font-style: italic;
+    padding: 5px;
+    padding-right: 0;
+}
+
+.calendar-container {
+    order: 1;
+    flex: 4 auto auto;
+    /* min-width: 5vw; */
+    display: grid;
+    grid-template-columns: repeat(7, minmax(60px, 180px));
+    grid-auto-rows: minmax(50px, 110px);
+    grid-template-rows: 50px;
+}
+
+.calendar-container .calendar-item {
+    font-size: 24px;
+    padding: 10px;
+    border-top: solid rgb(175, 175, 175) 2px;
+    border-left: solid rgb(175, 175, 175) 2px;
+    cursor: pointer;
+}
+
+.calendar-container .calendar-header {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 10px;
+    border-left: solid rgb(175, 175, 175) 2px;
+    border-bottom: solid black 2px;
+}
+
+.info-container {
+    order: 2;
+    flex: 2 auto auto;
+    min-width: 250px;
+}
+
+/* On screens that are less than 1024px, do not display info-container */
+/* TODO: try this out later */
+@media screen and (max-width: 800px) {
+    /* .info-container {
+        display: none;
+    } */
+    /* .root-container {
+        flex-flow: row wrap;
+    } */
+}

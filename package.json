@@ -5,11 +5,16 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "postinstall": "install-app-deps"
   },
   "author": "RikilG",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^8.1.1"
+    "electron": "^8.1.1",
+    "electron-builder": "^22.4.1"
+  },
+  "dependencies": {
+    "sqlite3": "^4.1.1"
   }
 }

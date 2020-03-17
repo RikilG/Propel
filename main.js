@@ -3,15 +3,15 @@ const { app, BrowserWindow } = require('electron')
 function createWindow () {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1024,
+    height: 768,
     webPreferences: {
       nodeIntegration: true
     }
   })
 
   // and load the index.html of the app.
-  win.loadFile('main.html')
+  win.loadFile('src/home.html')
 
   // Open the DevTools.
   win.webContents.openDevTools()
