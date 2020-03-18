@@ -1,3 +1,6 @@
+const dbManager = require('./scripts/database')
+const database = dbManager.getDatabase()
+
 /* Set the width of the side navigation to 250px and the left margin of the page content to 
 250px and add a black background color to body */
 function openSidebar() {
@@ -56,8 +59,8 @@ function monthToText(month) {
 }
 
 function buildCalendar(datetime) {
-    var month = 4//datetime.getMonth()
-    var year = 2005//datetime.getFullYear()
+    var month = datetime.getMonth()
+    var year = datetime.getFullYear()
     var initialDate = new Date(year, month, 1)
     var calendar = document.querySelector(".calendar-container")
     var i;
@@ -86,12 +89,8 @@ function buildCalendar(datetime) {
 }
 
 // renderCalendar()
-var datetime = new Date()
+var datetime = new Date() // get todays date
 buildCalendar(datetime)
 closeSidebar()
 
 document.getElementById("today").innerHTML = "Today is " + datetime.getDate()
-
-// TODO: sql connection
-// const sqlite3 = require('sqlite3').verbose();
-// let db = new sqlite3.Database(":memory:")

@@ -38,6 +38,13 @@
     border-top: solid rgb(175, 175, 175) 2px;
     border-left: solid rgb(175, 175, 175) 2px;
     cursor: pointer;
+    transition: 0.35s;
+}
+
+.calendar-item:hover {
+    transform: scale(1.1, 1.1);
+    background-color: rgb(146, 146, 146);
+    border-radius: 5px;
 }
 
 .calendar-container .calendar-header {
@@ -63,4 +70,30 @@
     /* .root-container {
         flex-flow: row wrap;
     } */
+}
+
+.floating-new {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    margin: 2%;
+    padding: 5px;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(96, 218, 39, 0.842);
+    border-radius: 50%;
+    /* border: 3px solid blue; */
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.floating-new:hover {
+    transform: scale(1.15, 1.15);
+}
+
+.new-icon {
+    position: relative;
+    top: 5px;
+    left: 5px;
+    width: 40px;
 }

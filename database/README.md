@@ -1,0 +1,1 @@
+This folder is used to hold databases. This file is added to keep the folder structure in git.
