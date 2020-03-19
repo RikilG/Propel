@@ -1,15 +1,15 @@
 const sqlite3 = require('sqlite3').verbose();
 var database = null
 
-function getDatabase() {
+async function getDatabase() {
     if (database != null && database != undefined) return database
 
     // TODO: remove this hardcoding
-    database = new sqlite3.Database("/mnt/STASH/@RIKIL/_Projects/@programming/Electron/ProPl/database/calendar.db", sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+    database = await new sqlite3.Database("/mnt/STASH/@RIKIL/_Projects/@programming/Electron/ProPl/database/calendar.db", sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
         if (err) console.log(err.message)
     })
 
-    database.serialize(() => {
+    await database.serialize(() => {
         // Queries scheduled here will be serialized.
         database.run(`CREATE TABLE IF NOT EXISTS 
             profiles(
@@ -53,10 +53,11 @@ function getDatabase() {
     })
     // localStorage.setItem('database', database)
     console.log("Successfully connected to database.")
+    return database
 }
 
-function closeDatabase() {
-    database.close((err) => {
+async function closeDatabase() {
+    await database.close((err) => {
         if (err) {
             console.log(err.message)
             throw err

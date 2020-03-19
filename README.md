@@ -10,7 +10,7 @@
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a> -->
 
-  <h3 align="center">ProPl</h3>
+  <h2 align="center">ProPl</h2>
 
   <p align="center">
     Productivity Planner
@@ -24,6 +24,12 @@
     ·
     <a href="https://github.com/RikilG/ProPl/issues">Request Feature</a>
   </p>
+</p>
+
+<p align="center">
+<a href="https://github.com/RikilG/ProPl">
+  <img src="design/screenshot.png" alt="Logo" width="600" height="480">
+</a>
 </p>
 
 

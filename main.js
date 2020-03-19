@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron')
 const dbManager = require('./src/scripts/database')
-var database = dbManager.getDatabase()
+const database = dbManager.getDatabase()
 
 function createWindow () {
     // Create the browser window.

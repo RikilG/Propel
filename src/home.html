@@ -14,11 +14,11 @@
     <div id="iSideBar" class="sidebar">
         <div class="user-info">UserName</div>
         <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
-        <a class="active" href="#home">Scheduler</a>
+        <a class="active" href="home.html">Scheduler</a>
         <a href="#notes">Notes</a>
         <a href="#diaries">Diaries</a>
         <a href="#about">About</a>
-        <a class="sidebar-settings" href="#settings">Settings</a>
+        <a class="sidebar-settings" href="settings.html">Settings</a>
     </div>
 
     <!-- The navbar. add side-push in class for sidebar push animation-->
@@ -32,6 +32,14 @@
             <span class="nav-item nav-status">Online/UserName</span>
         </span>
     </div>
+
+    <!-- Overlay -->
+    <div id="overlay"></div>
+    <!-- Special Centered Box -->
+    <!-- <div id="specialBox">
+        <p>Special box content ...</p> 
+        <button onmousedown="toggleOverlay()">Close Overlay</button>
+    </div> -->
 
     <!-- Page content. add side-push in class for sidebar push animation-->
     <div class="content side-push">
@@ -52,17 +60,22 @@
                 </div>
             </div>
             <div class="root-item info-container">
-                <h1 id="today">Today is </h1>
-                <h2>ToDo</h2>
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                <h2 id="iDate">Today is </h2>
+                <h3>Tasks on this day:</h3>
+                <div class="tasks">
+
+                </div>
             </div>
         </div>
-        <div class="floating-new">
-            <img class="new-icon" src="icons/plus.png" />
+        <div class="floating-actions">
+            <div class="floating-item floating-main" onclick="openNewMenu()">
+                <img class="floating-icon" src="icons/plus.png" />
+            </div>
         </div>
     </div> 
     
     <!-- Load home.html scripts -->
+    <script src="scripts/sidebar.js"></script>
     <script src="scripts/home.js"></script>
 </body>
 </html>

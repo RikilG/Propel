@@ -3,6 +3,7 @@
     margin: 0;
     padding: 0;
     width: 200px;
+    z-index: 8;
     background-color: #f1f1f1;
     position: fixed;
     height: 100%;
