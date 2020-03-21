@@ -2,6 +2,8 @@
 test
 # Database files
 database/*.db
+# my changelog file
+changelog
 
 # Created by https://www.gitignore.io/api/node,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=node,visualstudiocode

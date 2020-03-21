@@ -1,7 +1,5 @@
-const dbManager = require(process.cwd() + '/src/scripts/database')
 let menuToggle = false
-let menuItems = []//["reminder", "event", "notes", "todo", "goal"]
-let database;
+let menuItems = ["reminder", "event", "notes", "todo", "goal"] // same as what's in databaseZ
 /*
 reminder - set something to be reminded of - google calendar? - onetime
 event - events like bday's etc - can occor repetitively
@@ -10,17 +8,9 @@ todo - list of things to perform on that day
 goal - like todo but spans over many days
 */
 
-async function connectDatabase(callback) {
-    database = await dbManager.getDatabase()
-    if (callback) callback()
+String.prototype.capitalize = function() { // a captalize function
+    return this.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
 }
-
-connectDatabase(() => {
-    database.each('select ty_name from types;', [], (err, row) => {
-        if (err) throw err
-        menuItems.push(row.ty_name)
-    })
-})
 
 function monthToDays(month, year) {
     switch(month) {
@@ -62,26 +52,36 @@ function monthToText(month) {
 }
 
 function dateToText(date) {
-    switch(date%10) {
-        case 1: return date + "st"
-        case 2: return date + "nd"
-        case 3: return date + "rd"
-        default: return date + "th"
-    }
+    if(date>10 && date<20) return date + "th"
+    else if(date%10 == 1) return date + "st"
+    else if(date%10 == 2) return date + "nd"
+    else if(date%10 == 3) return date + "rd"
+    else return date + "th"
 }
 
 function dateSelected(mouseEvent, month, year) {
     let dateItem = mouseEvent.target
     document.querySelector("#iDate").innerHTML = dateToText(dateItem.date) + " " + monthToText(month)
     window.localStorage.setItem('selectedDate', `${year}-${month}-${dateItem.date}`)
-    
+    window.localStorage.setItem('date', dateItem.date)
+    window.localStorage.setItem('month', month)
+    window.localStorage.setItem('year', year)
 }
 
 function buildCalendar(datetime) {
-    var month = datetime.getMonth()
-    var year = datetime.getFullYear()
-    var initialDate = new Date(year, month, 1)
-    var calendar = document.querySelector(".calendar-container")
+    let month = datetime.getMonth()
+    let year = datetime.getFullYear()
+    let initialDate = new Date(year, month, 1)
+    let calendar = document.querySelector(".calendar-container")
+    let day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    calendar.innerHTML = ""
+    for(var x=0;x<7;x++) {
+        let temp = document.createElement('div')
+        temp.classList.add('calendar-header')
+        if(x == 0) temp.style.borderLeft = "0"
+        temp.innerHTML = day[x]
+        calendar.append(temp)
+    }
     var i;
     for(var j=0;j<initialDate.getDay();j++) {
         let emptyDate = document.createElement("div")
@@ -95,8 +95,10 @@ function buildCalendar(datetime) {
         temp.classList.add("date-"+i)
         temp.date = i
         temp.onclick = (mouseEvent) => dateSelected(mouseEvent, month, year)
-        if(new Date(year, month, i).getDay() == 0) // if sunday, paint orange
+        if(new Date(year, month, i).getDay() == 0) {// if sunday, paint orange, remove left border
             temp.style.backgroundColor = "rgb(255, 175, 84)"
+            temp.style.borderLeft = "0"
+        }
         temp.innerHTML = i
         calendar.append(temp)
     }
@@ -106,7 +108,11 @@ function buildCalendar(datetime) {
         emptyDate.style.cursor = "auto"
         calendar.append(emptyDate)
     }
-    document.querySelector(".date-"+datetime.getDate()).style.backgroundColor = "lightgreen"
+    window.localStorage.setItem('year', year)
+    window.localStorage.setItem('month', month)
+    let d = new Date(window.localStorage.getItem('today'))
+    if(month == d.getMonth() && year == d.getFullYear())
+        document.querySelector(".date-"+d.getDate()).style.backgroundColor = "lightgreen"
     document.querySelector(".calendar-year").innerHTML = year
     document.querySelector(".calendar-month").innerHTML = monthToText(month)
 }
@@ -127,31 +133,47 @@ function buildCalendar(datetime) {
 //     specialBox.style.display = "none"
 // }
 
-function openNewMenu() { // called in html by plus button
+function toggleNewMenu(action) { // called in html by plus button
+    if(action == "close" && menuToggle == false) return;
+    else if(action == "open" && menuToggle == true) return;
+
     floating_actions = document.querySelector(".floating-actions")
 
     if (menuToggle) { // menu is open, close it
-        let menu_icon = document.querySelector(".floating-main")
+        document.querySelector(".floating-main .tooltip").innerHTML = "New"
+        let menu_icon = document.querySelector(".floating-main .floating-icon")
         menu_icon.style.transform = "rotate(0deg)"
         let menu_list = document.querySelectorAll(".floating-item")
         for(let i=1;i<menu_list.length;i++) {
             menu_list[i].parentNode.removeChild(menu_list[i])
         }
 
-        hideOverlay()
+        if(!action) hideOverlay()
         menuToggle = false
     }
     else { // menu is closed, open it
-        let menu_icon = document.querySelector(".floating-main")
+        document.querySelector(".floating-main .tooltip").innerHTML = "Close"
+        let menu_icon = document.querySelector(".floating-main .floating-icon")
         menu_icon.style.transform = "rotate(135deg)"
         showOverlay(3)
         for(let i=0;i<menuItems.length;i++) {
             let temp1 = document.createElement('div')
             temp1.classList.add("floating-item")
+            temp1.taskName = menuItems[i]
             let temp1img = document.createElement('img')
             temp1img.classList.add("floating-icon")
             temp1img.src = "icons/" + menuItems[i] + ".png"
             temp1.append(temp1img)
+            let temp1tooltip = document.createElement('div')
+            temp1tooltip.classList.add('tooltip')
+            temp1tooltip.innerHTML = menuItems[i].capitalize()
+            temp1.append(temp1tooltip)
+            temp1.onclick = () => {
+                toggleNewMenu()
+                showOverlay(5)
+                document.getElementById(temp1.taskName + "Box").style.display = "block"
+                // if(temp1.taskName == "reminder") 
+            }
             floating_actions.append(temp1)
         }
         
@@ -159,8 +181,69 @@ function openNewMenu() { // called in html by plus button
     }
 }
 
-// renderCalendar()
+function prevMonth() {
+    let month = parseInt(window.localStorage.getItem('month'))
+    let year = parseInt(window.localStorage.getItem('year'))
+    if(month == 0) {
+        year = year-1
+        month = 12
+    }
+    month = month-1
+    let datetime = new Date(year, month, window.localStorage.getItem('date'))
+    buildCalendar(datetime)
+}
+
+function nextMonth() {
+    let month = parseInt(window.localStorage.getItem('month'))
+    let year = parseInt(window.localStorage.getItem('year'))
+    if(month == 11) {
+        year = year+1
+        month = -1
+    }
+    month = month+1
+    let datetime = new Date(year, month, window.localStorage.getItem('date'))
+    buildCalendar(datetime)
+}
+
+function changeMonth() {
+    let calendar = document.querySelector(".calendar-container")
+    calendar.innerHTML = ""
+    for(var i=0;i<7;i++) {
+        let temp1 = document.createElement('div')
+        temp1.classList.add('calendar-item')
+        calendar.append(temp1)
+    }
+    for(var x=0;x<12;x++) {
+        let temp = document.createElement('div')
+        temp.classList.add('calendar-item')
+        temp.innerHTML = monthToText(x)
+        temp.style.fontSize = "21px"
+        temp.month = x
+        temp.onclick = (mouseEvent) => {
+            let monthEvent = mouseEvent.target
+            datetime = new Date(window.localStorage.getItem('year'), monthEvent.month, 1)
+            buildCalendar(datetime)
+        }
+        calendar.append(temp)
+    }
+    for(var i=0;i<2;i++) {
+        let temp1 = document.createElement('div')
+        temp1.classList.add('calendar-item')
+        calendar.append(temp1)
+    }
+}
+
+function changeYear() {
+    let calendar = document.querySelector(".calendar-container")
+    calendar.innerHTML = ""
+    
+}
+
 var datetime = new Date() // get todays date
+window.localStorage.setItem('today', datetime)
+window.localStorage.setItem('selectedDate', `${datetime.getFullYear()}-${datetime.getMonth()}-${datetime.getDate()}`)
+
+// renderCalendar()
 buildCalendar(datetime)
 
 document.getElementById("iDate").innerHTML = "Today is " 

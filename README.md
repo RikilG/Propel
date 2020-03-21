@@ -115,11 +115,11 @@ Examples on how to use this project will be put up here once there is considerab
  - Scrape CMS to find notices/events and add to calendar
  - take photo of calendar and put as wallpaper
    - for neatness, blur existing wallpaper and overlay calendar on it(imagemagick?)
- - orgmode style todo list?
- - use sql database(a table per year) to store events written by hand
- - include diary entries?
- - sync to google calendar?
+ - orgmode style notes (save in markdown, view in markdown)
  - add goals and checklist (like todo) for each day
+ - use sql database to store events
+ - include diary entries (encrypted?)
+ - sync to google calendar
 
 
 ## Contributing
@@ -139,4 +139,4 @@ If you think there should be a new feature, please consider opening an issue [he
 
 ## License
 
-Distributed under the MIT License. See `LICENSE` for more information or [click here](LICENSE.md)
+Distributed under the MIT License. See `LICENSE` for more information or [click here](LICENSE)

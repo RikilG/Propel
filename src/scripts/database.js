@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
 var database = null
 
 async function getDatabase() {
-    if (database != null && database != undefined) return database
+    if (database) return database
 
     // TODO: remove this hardcoding
     database = await new sqlite3.Database("/mnt/STASH/@RIKIL/_Projects/@programming/Electron/ProPl/database/calendar.db", sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {

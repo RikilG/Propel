@@ -10,16 +10,37 @@
 }
 
 .calendar-instance {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
     text-align: center;
 }
 
 .calendar-month, 
 .calendar-year {
-    margin: 5px;
     font-size: 24px;
     font-style: italic;
-    padding: 5px;
     padding-right: 0;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.calendar-month:hover, 
+.calendar-year:hover {
+    border-bottom: solid rgb(124, 124, 124) 3px;
+    border-top: solid rgb(124, 124, 124) 3px;
+}
+
+.icon {
+    width: 20px;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: 0.4s;
+}
+
+.icon:hover {
+    background-color: rgb(206, 206, 206);
 }
 
 .calendar-container {
@@ -98,9 +119,28 @@
     box-shadow: 4px 4px 8px rgb(75, 75, 75);
 }
 
+.floating-item .tooltip {
+    visibility: hidden;
+    min-width: 50px;
+    background-color: rgba(36, 36, 36, 0.856);
+    color: #fff;
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 6px;
+    position: absolute;
+    right: 65px;
+    bottom: 15px;
+    font-size: 18px;
+    z-index: 1;
+}
+
 .floating-item:hover {
     transform: scale(0.92, 0.92);
     box-shadow: none;
+}
+
+.floating-item:hover .tooltip {
+    visibility: visible;
 }
 
 .floating-icon {
@@ -108,9 +148,10 @@
     top: 8px;
     left: 8px;
     width: 34px;
+    transition: 0.6s;
 }
 
-div#overlay {
+#overlay {
 	display: none;
 	z-index: 2;
 	background: #000;
@@ -122,13 +163,83 @@ div#overlay {
     text-align: center;
 }
 
-div#specialBox {
+.specialBox {
 	display: none;
-	position: fixed;
-	z-index: 3;
-	margin: 150px 150px 0px auto;
-	width: 500px; 
-	height: 300px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 6;
+    margin: 15vh 10vw;
+	width: 80vw; 
+	height: 70vh;
 	background: #FFF;
 	color: #000;
+    border-radius: 1em;
+}
+
+.specialBox .closebtn {
+    display: block;
+    font-size: 36px;
+    position: absolute;
+    padding: 8px;
+    top: 0;
+    right: 10px;
+    text-decoration: none;
+    color: black;
+    transition: 0.4s;
+}
+
+.specialBox .title {
+    margin: 18px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.specialBox .closebtn:hover {
+    background-color: rgba(85, 85, 85, 0.952);
+}
+
+.specialBox .row {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    margin: 10px;
+}
+
+.specialBox .description {
+    position: absolute;
+    bottom: 0;
+    color: rgb(87, 87, 87);
+    margin: 16px;
+}
+
+textarea:focus, input:focus {
+    outline: none;
+}
+
+.textbox-main,
+.textbox {
+    display: block;
+    border: 0;
+    border-bottom: solid rgb(3, 3, 3) 1px;
+    border-radius: 5%;
+    transition: 0.2s;
+    font-size: 18px;
+}
+
+.label {
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+.textbox-main {
+    width: 86%;
+    font-size: 18px;
+    margin: 16px 5%;
+    padding: 10px;
+}
+
+.textbox-main:focus {
+    border: 0;
+    border-bottom: solid rgb(52, 75, 177) 3px;
 }
