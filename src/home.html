@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/home.css" />
     <link rel="stylesheet" href="css/sidebar.css" />
     <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/tasks.css" />
 </head>
 <body>
      <!-- The sidebar -->
@@ -36,6 +37,9 @@
     <!-- Overlay -->
     <div id="overlay" onclick="hideOverlay()"></div>
 
+    <!-- Notification -->
+    <div id="notification" onclick="hideNotification()"></div>
+
     <!-- Page content. add side-push in class for sidebar push animation-->
     <div class="content side-push">
         <div class="root-container">
@@ -58,9 +62,13 @@
             </div>
             <div class="root-item info-container">
                 <h2 id="iDate">Today is </h2>
-                <h3>Tasks on this day:</h3>
                 <div class="tasks">
-
+                    <div id="task-template">
+                        <span id="task-template-text"></span>
+                        <span id="task-template-status"></span>
+                    </div>
+                    <div id="tasks-all-day"><h4>Tasks (all day):</h4></div>
+                    <div id="tasks-normal"><h4>Tasks (time specific):</h4></div>
                 </div>
             </div>
         </div>
@@ -72,16 +80,29 @@
                 <div class="tooltip">New</div>
             </div>
         </div>
+        <div class="floating-today">
+            <div class="fab" onclick="let today=new Date();buildCalendar(today);dateSelected(today.getFullYear(), today.getMonth(), today.getDate());">
+                <img class="floating-icon" src="icons/today.png" />
+                <div class="tooltip">Today</div>
+            </div>
+        </div>
 
         <!-- Task Boxes/overlays -->
         <div class="specialBox" id="reminderBox">
             <div class="title">New Reminder</div>
             <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
             <input type="text" class="textbox-main" placeholder="Remind me to..." />
-            <div class="row"><span class="label" >Date:</span><input type="text" id="reminderDateTb" class="textbox" /></div>
-            <div class="row"><span class="label" >Time:</span><input type="text" id="reminderTimeTb" class="textbox" /></div>
-            <div class="row"><span class="label" >Repeat:</span><input type="text" class="textbox" /></div>
-            <div class="row"><div><input type="checkbox" /><span>All Day</span></div></div>
+            <div class="row"><span class="label" >Date :</span><input type="text" id="reminderDateTb" class="textbox" /></div>
+            <div class="row">
+                <span class="label" >Time :</span>
+                <span>
+                <span>HH:</span><input type="text" id="reminderTimeHTb" class="textbox-small" placeholder="HH"/>
+                <span>MM:</span><input type="text" id="reminderTimeMTb" class="textbox-small" placeholder="MM"/>
+                </span>
+            </div>
+            <!-- <div class="row"><span class="label" >Repeat :</span><input type="text" class="textbox" /></div> -->
+            <div class="row"><div><input type="checkbox" id="reminderAllDay" onclick="toggleTimeTb()"/><span>All Day</span></div></div>
+            <div class="row"><span class="button" onclick="setNewReminder()">Save</span></div>
             <div class="description">
                 Set reminders when you want to be reminded of something. Unlike events, 
                 reminders will carry forward to next day if they are not checked-off.

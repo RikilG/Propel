@@ -59,15 +59,6 @@ function dateToText(date) {
     else return date + "th"
 }
 
-function dateSelected(mouseEvent, month, year) {
-    let dateItem = mouseEvent.target
-    document.querySelector("#iDate").innerHTML = dateToText(dateItem.date) + " " + monthToText(month)
-    window.localStorage.setItem('selectedDate', `${year}-${month}-${dateItem.date}`)
-    window.localStorage.setItem('date', dateItem.date)
-    window.localStorage.setItem('month', month)
-    window.localStorage.setItem('year', year)
-}
-
 function buildCalendar(datetime) {
     let month = datetime.getMonth()
     let year = datetime.getFullYear()
@@ -94,7 +85,7 @@ function buildCalendar(datetime) {
         temp.classList.add("calendar-item")
         temp.classList.add("date-"+i)
         temp.date = i
-        temp.onclick = (mouseEvent) => dateSelected(mouseEvent, month, year)
+        temp.onclick = (mouseEvent) => dateSelected(year, month, mouseEvent.target.date)
         if(new Date(year, month, i).getDay() == 0) {// if sunday, paint orange, remove left border
             temp.style.backgroundColor = "rgb(255, 175, 84)"
             temp.style.borderLeft = "0"
@@ -172,7 +163,11 @@ function toggleNewMenu(action) { // called in html by plus button
                 toggleNewMenu()
                 showOverlay(5)
                 document.getElementById(temp1.taskName + "Box").style.display = "block"
-                // if(temp1.taskName == "reminder") 
+                if(temp1.taskName == "reminder") initReminderOverlay()
+                else if(temp1.taskName == "event") initEventOverlay()
+                else if(temp1.taskName == "notes") initNotesOverlay()
+                else if(temp1.taskName == "todo") initTodoOverlay()
+                else if(temp1.taskName == "goal") initGoalOverlay()
             }
             floating_actions.append(temp1)
         }
@@ -241,10 +236,14 @@ function changeYear() {
 
 var datetime = new Date() // get todays date
 window.localStorage.setItem('today', datetime)
-window.localStorage.setItem('selectedDate', `${datetime.getFullYear()}-${datetime.getMonth()}-${datetime.getDate()}`)
+window.localStorage.setItem('selectedDate', `${datetime.getFullYear()}-${datetime.getMonth()+1}-${datetime.getDate()}`)
+window.localStorage.setItem('date', datetime.getDate())
+window.localStorage.setItem('month', datetime.getMonth())
+window.localStorage.setItem('year', datetime.getFullYear())
 
 // renderCalendar()
 buildCalendar(datetime)
+dateSelected(datetime.getFullYear(), datetime.getMonth(), datetime.getDate())
 
 document.getElementById("iDate").innerHTML = "Today is " 
     + dateToText(datetime.getDate()) + " of " + monthToText(datetime.getMonth())

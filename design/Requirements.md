@@ -8,6 +8,7 @@ Core requirements which need more attention
  - [ ] Ability to write To-Do's for each day
  - [ ] Ability to plan out a complete day's work
  - [ ] Setting up events, alarms, remainders for each day
+ - [ ] Ability to support recuring tasks
  - [ ] Automated analysis of work done(schedule followed or ToDo's done) (in percentage completed)
 
 

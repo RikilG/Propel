@@ -51,10 +51,7 @@
 ## About The Project
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
-
-
-<!-- If you have hosted your project (ex: Heroku) l -->
-<!-- Project demo hosted [here](https://example.com) -->
+This is still an alpha build and is in early stages of development...
 
 
 ### Built With
@@ -112,6 +109,7 @@ Examples on how to use this project will be put up here once there is considerab
 
 
 ## Ideas
+Check (Requirements)[design/Requirements.md] for all current requirements to be satisfied by the end product
  - Scrape CMS to find notices/events and add to calendar
  - take photo of calendar and put as wallpaper
    - for neatness, blur existing wallpaper and overlay calendar on it(imagemagick?)

@@ -36,18 +36,18 @@ async function getDatabase() {
             single_tasks(
                 st_id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 t_id INTEGER REFERENCES tasks(t_id), 
-                st_date TEXT, 
-                st_time TEXT
+                st_start_datetime INTEGER,
+                st_end_datetime INTEGER,
+                st_status TEXT
             );
         `, (err) => { if (err) console.log(err) })
         .run(`CREATE TABLE IF NOT EXISTS 
             recuring_tasks(
                 rt_id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 t_id INTEGER REFERENCES tasks(t_id),
-                rt_start_date TEXT, 
-                rt_end_date TEXT, 
-                rt_time TEXT, 
-                rt_interval TEXT
+                rt_start_datetime INTEGER,
+                rt_end_datetime INTEGER,
+                rt_repeat_interval TEXT
             );
         `, (err) => { if (err) console.log(err) })
     })

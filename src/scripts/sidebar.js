@@ -39,4 +39,24 @@ function closeSidebar() {
     hideOverlay()
 }
 
+function hideNotification() {
+    document.getElementById("notification").style.display = "none";
+}
+
+function notify(text, color) {
+    let n = document.getElementById("notification")
+    n.innerHTML = text
+    if(color == "red") {
+        n.style.backgroundColor = "rgba(199, 68, 35, 0.8)"
+    }
+    else {
+        n.style.backgroundColor = "rgba(32, 108, 179, 0.9)"
+    }
+    // console.log(text)
+    n.style.display = "block"
+    setTimeout(() => {
+        n.style.display = "none"
+    }, 5000)
+}
+
 closeSidebar()

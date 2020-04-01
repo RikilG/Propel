@@ -45,7 +45,7 @@
 
 .calendar-container {
     order: 1;
-    flex: 4 auto auto;
+    flex: 4 auto;
     /* min-width: 5vw; */
     display: grid;
     grid-template-columns: repeat(7, minmax(60px, 180px));
@@ -79,7 +79,7 @@
 
 .info-container {
     order: 2;
-    flex: 2 auto auto;
+    flex: 2 auto;
     min-width: 250px;
 }
 
@@ -94,6 +94,15 @@
     } */
 }
 
+.floating-today {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 12px;
+    margin-right: 96px;
+    transition: 0.2s;
+}
+
 .floating-actions {
     position: fixed;
     display: flex;
@@ -101,12 +110,13 @@
     z-index: 4;
     right: 0;
     bottom: 0;
-    margin-right: 2%;
-    margin-bottom: 1%;
+    margin-right: 16px;
+    margin-bottom: 12px;
     transition: 0.2s;
 }
 
-.floating-item {
+.floating-item,
+.fab {
     width: 50px;
     height: 50px;
     padding: 5px;
@@ -119,7 +129,7 @@
     box-shadow: 4px 4px 8px rgb(75, 75, 75);
 }
 
-.floating-item .tooltip {
+.tooltip {
     visibility: hidden;
     min-width: 50px;
     background-color: rgba(36, 36, 36, 0.856);
@@ -134,12 +144,14 @@
     z-index: 1;
 }
 
-.floating-item:hover {
+.floating-item:hover,
+.fab:hover {
     transform: scale(0.92, 0.92);
     box-shadow: none;
 }
 
-.floating-item:hover .tooltip {
+.floating-item:hover .tooltip,
+.fab:hover .tooltip {
     visibility: visible;
 }
 
@@ -151,27 +163,15 @@
     transition: 0.6s;
 }
 
-#overlay {
-	display: none;
-	z-index: 2;
-	background: #000;
-	position: fixed;
-	width: 100%;
-	height: 100%;
-	top: 0px;
-	left: 0px;
-    text-align: center;
-}
-
 .specialBox {
 	display: none;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 6;
-    margin: 15vh 10vw;
+    margin: 12vh 10vw;
 	width: 80vw; 
-	height: 70vh;
+	min-height: 70vh;
 	background: #FFF;
 	color: #000;
     border-radius: 1em;
@@ -202,7 +202,7 @@
 .specialBox .row {
     display: flex;
     flex-flow: row wrap;
-    justify-content: space-evenly;
+    justify-content: space-around;
     margin: 10px;
 }
 
@@ -222,14 +222,10 @@ textarea:focus, input:focus {
     display: block;
     border: 0;
     border-bottom: solid rgb(3, 3, 3) 1px;
-    border-radius: 5%;
+    border-radius: 2em;
     transition: 0.2s;
     font-size: 18px;
-}
-
-.label {
-    font-size: 18px;
-    vertical-align: middle;
+    padding: 1px 10px;
 }
 
 .textbox-main {
@@ -242,4 +238,40 @@ textarea:focus, input:focus {
 .textbox-main:focus {
     border: 0;
     border-bottom: solid rgb(52, 75, 177) 3px;
+}
+
+.textbox-small {
+    width: 50px;
+    border: 0;
+    border-bottom: solid rgb(3, 3, 3) 1px;
+    border-radius: 2em;
+    transition: 0.2s;
+    font-size: 18px;
+    padding: 1px 12px;
+    margin: 1px 10px;
+    text-align: center;
+}
+
+.label {
+    font-size: 18px;
+    vertical-align: middle;
+}
+
+.button {
+    background-color: rgb(42, 94, 238);
+    color: white;
+    font-style: bold;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 3px 3px 5px rgb(70, 79, 94);
+    padding: 8px 16px;
+    margin: 10px;
+    margin-bottom: 50px;
+    border-radius: 0.25em;
+    transition: 0.3s;
+}
+
+.button:hover {
+    box-shadow: none;
+    transform: scale(0.98, 0.98)
 }
