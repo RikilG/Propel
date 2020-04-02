@@ -150,15 +150,15 @@
     box-shadow: none;
 }
 
-.floating-item:hover .tooltip,
-.fab:hover .tooltip {
+.tooltip-parent:hover .tooltip {
     visibility: visible;
 }
 
 .floating-icon {
     position: relative;
-    top: 8px;
-    left: 8px;
+    margin: 8px;
+    /* top: 8px;
+    left: 8px; */
     width: 34px;
     transition: 0.6s;
 }
@@ -197,6 +197,7 @@
 
 .specialBox .closebtn:hover {
     background-color: rgba(85, 85, 85, 0.952);
+    border-radius: 0.2em;
 }
 
 .specialBox .row {
@@ -259,13 +260,12 @@ textarea:focus, input:focus {
 
 .button {
     background-color: rgb(42, 94, 238);
-    color: white;
     font-style: bold;
     font-size: 20px;
     cursor: pointer;
     box-shadow: 3px 3px 5px rgb(70, 79, 94);
-    padding: 8px 16px;
-    margin: 10px;
+    padding: 8px 22px;
+    margin: 15px;
     margin-bottom: 50px;
     border-radius: 0.25em;
     transition: 0.3s;
@@ -274,4 +274,24 @@ textarea:focus, input:focus {
 .button:hover {
     box-shadow: none;
     transform: scale(0.98, 0.98)
+}
+
+.blue-bg {
+    background-color: rgb(42, 94, 238);
+}
+
+.red-bg {
+    background-color: rgb(250, 50, 50);
+}
+
+.green-bg {
+    background-color: rgb(88, 218, 56);
+}
+
+.black-bg {
+    background-color: rgb(25, 26, 29);
+}
+
+.white-bg {
+    background-color: rgb(197, 216, 224);
 }

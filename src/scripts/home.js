@@ -150,6 +150,7 @@ function toggleNewMenu(action) { // called in html by plus button
         for(let i=0;i<menuItems.length;i++) {
             let temp1 = document.createElement('div')
             temp1.classList.add("floating-item")
+            temp1.classList.add("tooltip-parent")
             temp1.taskName = menuItems[i]
             let temp1img = document.createElement('img')
             temp1img.classList.add("floating-icon")
@@ -162,7 +163,7 @@ function toggleNewMenu(action) { // called in html by plus button
             temp1.onclick = () => {
                 toggleNewMenu()
                 showOverlay(5)
-                document.getElementById(temp1.taskName + "Box").style.display = "block"
+                document.getElementById("new" + temp1.taskName.capitalize() + "Box").style.display = "block"
                 if(temp1.taskName == "reminder") initReminderOverlay()
                 else if(temp1.taskName == "event") initEventOverlay()
                 else if(temp1.taskName == "notes") initNotesOverlay()

@@ -9,11 +9,10 @@ function showOverlay(z) {
 
 function hideOverlay() {
     var overlay = document.getElementById('overlay')
-    document.getElementById('reminderBox').style.display = "none";
-    document.getElementById('eventBox').style.display = "none";
-    document.getElementById('notesBox').style.display = "none";
-    document.getElementById('todoBox').style.display = "none";
-    document.getElementById('goalBox').style.display = "none";
+    let closeList = document.querySelectorAll('.specialBox')
+    closeList.forEach((value, index) => {
+        value.style.display = "none"
+    })
     toggleNewMenu("close")
     // close side menu
     document.getElementById("iSideBar").style.width = "0";

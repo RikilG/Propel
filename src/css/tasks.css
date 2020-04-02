@@ -11,8 +11,11 @@
 #task-template-status {
     font-style: italic;
     position: absolute;
-    right: 8px;
-    color: rgb(78, 78, 78);
+    right: 6px;
+    color: rgb(53, 53, 53);
+    background-color: rgba(93, 228, 93, 0.945);
+    border-radius: 0.5em;
+    padding: 0px 8px;
 }
 
 h4 {

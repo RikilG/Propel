@@ -73,25 +73,25 @@
             </div>
         </div>
 
-        <!-- Floating action button for new task -->
+        <!-- Floating action button for new task and today-->
         <div class="floating-actions">
-            <div class="floating-item floating-main" onclick="toggleNewMenu()">
+            <div class="floating-item floating-main tooltip-parent" onclick="toggleNewMenu()">
                 <img class="floating-icon" src="icons/plus.png" />
                 <div class="tooltip">New</div>
             </div>
         </div>
         <div class="floating-today">
-            <div class="fab" onclick="let today=new Date();buildCalendar(today);dateSelected(today.getFullYear(), today.getMonth(), today.getDate());">
+            <div class="fab tooltip-parent" onclick="let today=new Date();buildCalendar(today);dateSelected(today.getFullYear(), today.getMonth(), today.getDate());">
                 <img class="floating-icon" src="icons/today.png" />
                 <div class="tooltip">Today</div>
             </div>
         </div>
 
-        <!-- Task Boxes/overlays -->
-        <div class="specialBox" id="reminderBox">
+        <!-- new Task Boxes/overlays -->
+        <div class="specialBox" id="newReminderBox">
             <div class="title">New Reminder</div>
             <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
-            <input type="text" class="textbox-main" placeholder="Remind me to..." />
+            <input type="text" class="textbox-main" id="tbReminderTitleNew" placeholder="Remind me to..." />
             <div class="row"><span class="label" >Date :</span><input type="text" id="reminderDateTb" class="textbox" /></div>
             <div class="row">
                 <span class="label" >Time :</span>
@@ -101,21 +101,21 @@
                 </span>
             </div>
             <!-- <div class="row"><span class="label" >Repeat :</span><input type="text" class="textbox" /></div> -->
-            <div class="row"><div><input type="checkbox" id="reminderAllDay" onclick="toggleTimeTb()"/><span>All Day</span></div></div>
+            <div class="row"><div><input type="checkbox" id="reminderAllDay-new" onclick="toggleTimeTb('reminderAllDay-new')"/><span>All Day</span></div></div>
             <div class="row"><span class="button" onclick="setNewReminder()">Save</span></div>
             <div class="description">
                 Set reminders when you want to be reminded of something. Unlike events, 
                 reminders will carry forward to next day if they are not checked-off.
             </div>
         </div>
-        <div class="specialBox" id="eventBox">
+        <div class="specialBox" id="newEventBox">
             <div class="title" >Create Event</div>
             <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
             <div class="description">
                 Set a calendar event on any particular day (ex: birthday, meeting, etc).
             </div>
         </div>
-        <div class="specialBox" id="notesBox">
+        <div class="specialBox" id="newNotesBox">
             <div class="title" >Add Notes</div>
             <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
             <div class="description">
@@ -123,21 +123,58 @@
                 in your own words. 
             </div>
         </div>
-        <div class="specialBox" id="todoBox">
+        <div class="specialBox" id="newTodoBox">
             <div class="title" >Make ToDo</div>
             <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
             <div class="description">
                 A traditional To-Do list for a set of tasks to be performed on a day.
             </div>
         </div>
-        <div class="specialBox" id="goalBox">
+        <div class="specialBox" id="newGoalBox">
             <div class="title" >Set a Goal</div>
             <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
             <div class="description">
                 Wanna increase productivity? Set long range goals with periodic reminders here.
             </div>
         </div>
-    </div> 
+    </div>
+
+    <!-- edit task boxes/overlays -->
+    <div class="specialBox" id="editReminderBox">
+        <div class="title" >Edit Reminder</div>
+        <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
+        <input type="text" class="textbox-main" id="tbReminderTitleEdit" placeholder="Remind me to..." />
+        <div class="row"><span class="label" >Date :</span><input type="text" id="reminderDateTb-edit" class="textbox" /></div>
+        <div class="row">
+            <span class="label" >Time :</span>
+            <span>
+            <span>HH:</span><input type="text" id="reminderTimeHTb-edit" class="textbox-small" placeholder="HH"/>
+            <span>MM:</span><input type="text" id="reminderTimeMTb-edit" class="textbox-small" placeholder="MM"/>
+            </span>
+        </div>
+        <!-- <div class="row"><span class="label" >Repeat :</span><input type="text" class="textbox" /></div> -->
+        <div class="row"><div><input type="checkbox" id="reminderAllDay-edit" onclick="toggleTimeTb('reminderAllDay-edit');"/><span>All Day</span></div></div>
+        <div class="row">
+            <span class="button red-bg tooltip-parent" id="btnReminderDelete" onclick="modifyReminder('delete');">
+                <img class="floating-icon" src="icons/trash.png" />
+                <div class="tooltip">Delete Reminder</div>
+                <div style="margin-left: 3%;">Delete</div>
+            </span>
+            <span class="button green-bg tooltip-parent" id="btnReminderDone" onclick="modifyReminder('done');">
+                <img class="floating-icon" src="icons/done.png" />
+                <div class="tooltip">Task Completed</div>
+                <div style="margin-left: 10%;">Done</div>
+            </span>
+            <span class="button blue-bg tooltip-parent" id="btnReminderSave" onclick="modifyReminder('save');">
+                <img class="floating-icon" src="icons/save.png" />
+                <div class="tooltip">Save</div>
+                <div style="margin-left: 10%;">Save</div>
+            </span>
+        </div>
+        <div class="description">
+            
+        </div>
+    </div>
     
     <!-- Load home.html scripts. (Order matters!) -->
     <script src="scripts/tasks.js"></script>
