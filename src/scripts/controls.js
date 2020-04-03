@@ -16,8 +16,8 @@ function hideOverlay() {
     toggleNewMenu("close")
     // close side menu
     document.getElementById("iSideBar").style.width = "0";
-    if ( document.querySelector(".side-push") )
-        document.querySelector(".side-push").style.marginLeft = "0";
+    if ( document.querySelectorAll(".side-push").length > 0 )
+        document.querySelectorAll(".side-push").forEach((value, index) => value.style.marginLeft = "0")
     // document.body.style.backgroundColor = "white";
     overlay.style.display = "none"
 }
@@ -26,8 +26,8 @@ function hideOverlay() {
 250px and add a black background color to body */
 function openSidebar() {
     document.getElementById("iSideBar").style.width = "250px";
-    if ( document.querySelector(".side-push") )
-        document.querySelector(".side-push").style.marginLeft = "250px";
+    if ( document.querySelectorAll(".side-push").length > 0 )
+        document.querySelectorAll(".side-push").forEach((value, index) => value.style.marginLeft = "250px")
     // document.body.style.backgroundColor = "rgba(0,0,0,0.4)";
     showOverlay(7)
 }

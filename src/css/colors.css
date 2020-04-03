@@ -1,0 +1,34 @@
+.blue-bg,
+.blue-bg:hover {
+    background-color: rgb(42, 94, 238);
+}
+
+.red-bg,
+.red-bg:hover {
+    background-color: rgb(250, 50, 50);
+}
+
+.green-bg,
+.green-bg:hover {
+    background-color: rgb(120, 230, 93);
+}
+
+.black-bg,
+.black-bg:hover {
+    background-color: rgb(25, 26, 29);
+}
+
+.white-bg,
+.white-bg:hover {
+    background-color: rgb(197, 216, 224);
+}
+
+.yellow-bg,
+.yellow-bg:hover {
+    background-color: rgb(253, 255, 111);
+}
+
+.orange-bg,
+.orange-bg:hover {
+    background-color: rgb(255, 155, 61)
+}

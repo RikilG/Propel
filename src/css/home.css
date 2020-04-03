@@ -31,18 +31,6 @@
     border-top: solid rgb(124, 124, 124) 3px;
 }
 
-.icon {
-    width: 20px;
-    padding: 5px;
-    cursor: pointer;
-    border-radius: 50%;
-    transition: 0.4s;
-}
-
-.icon:hover {
-    background-color: rgb(206, 206, 206);
-}
-
 .calendar-container {
     order: 1;
     flex: 4 auto;
@@ -92,75 +80,6 @@
     /* .root-container {
         flex-flow: row wrap;
     } */
-}
-
-.floating-today {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    margin-bottom: 12px;
-    margin-right: 96px;
-    transition: 0.2s;
-}
-
-.floating-actions {
-    position: fixed;
-    display: flex;
-    flex-flow: column-reverse nowrap;
-    z-index: 4;
-    right: 0;
-    bottom: 0;
-    margin-right: 16px;
-    margin-bottom: 12px;
-    transition: 0.2s;
-}
-
-.floating-item,
-.fab {
-    width: 50px;
-    height: 50px;
-    padding: 5px;
-    margin: 8px;
-    background-color: rgba(96, 218, 39, 0.842);
-    border-radius: 50%;
-    /* border: 3px solid blue; */
-    cursor: pointer;
-    transition: 0.5s;
-    box-shadow: 4px 4px 8px rgb(75, 75, 75);
-}
-
-.tooltip {
-    visibility: hidden;
-    min-width: 50px;
-    background-color: rgba(36, 36, 36, 0.856);
-    color: #fff;
-    text-align: center;
-    padding: 5px 10px;
-    border-radius: 6px;
-    position: absolute;
-    right: 65px;
-    bottom: 15px;
-    font-size: 18px;
-    z-index: 1;
-}
-
-.floating-item:hover,
-.fab:hover {
-    transform: scale(0.92, 0.92);
-    box-shadow: none;
-}
-
-.tooltip-parent:hover .tooltip {
-    visibility: visible;
-}
-
-.floating-icon {
-    position: relative;
-    margin: 8px;
-    /* top: 8px;
-    left: 8px; */
-    width: 34px;
-    transition: 0.6s;
 }
 
 .specialBox {
@@ -274,39 +193,4 @@ textarea:focus, input:focus {
 .button:hover {
     box-shadow: none;
     transform: scale(0.98, 0.98)
-}
-
-.blue-bg,
-.blue-bg:hover {
-    background-color: rgb(42, 94, 238);
-}
-
-.red-bg,
-.red-bg:hover {
-    background-color: rgb(250, 50, 50);
-}
-
-.green-bg,
-.green-bg:hover {
-    background-color: rgb(120, 230, 93);
-}
-
-.black-bg,
-.black-bg:hover {
-    background-color: rgb(25, 26, 29);
-}
-
-.white-bg,
-.white-bg:hover {
-    background-color: rgb(197, 216, 224);
-}
-
-.yellow-bg,
-.yellow-bg:hover {
-    background-color: rgb(253, 255, 111);
-}
-
-.orange-bg,
-.orange-bg:hover {
-    background-color: rgb(255, 155, 61)
 }

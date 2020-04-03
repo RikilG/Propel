@@ -2,13 +2,13 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Home</title>
+    <title>Scheduler</title>
     <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
     <link rel="stylesheet" href="css/home.css" />
-    <link rel="stylesheet" href="css/sidebar.css" />
-    <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/controls.css" />
     <link rel="stylesheet" href="css/tasks.css" />
+    <link rel="stylesheet" href="css/colors.css" />
 </head>
 <body>
      <!-- The sidebar -->
@@ -17,7 +17,7 @@
         <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
         <a class="active" href="home.html">Scheduler</a>
         <a href="#notes">Notes</a>
-        <a href="#diaries">Diaries</a>
+        <a href="diary.html">Diaries</a>
         <a href="#about">About</a>
         <a class="sidebar-settings" href="settings.html">Settings</a>
     </div>
@@ -41,14 +41,14 @@
     <div id="notification" onclick="hideNotification()"></div>
 
     <!-- Page content. add side-push in class for sidebar push animation-->
-    <div class="content side-push">
+    <div class="content">
         <div class="root-container">
             <div class="root-item">
                 <div class="calendar-instance">
-                    <span class="calendar-left" onclick="prevMonth()"><img class="icon" src="icons/arrow-left.png" /></span>
+                    <span class="calendar-left" onclick="prevMonth()"><img class="icon-small-circular" src="icons/arrow-left.png" /></span>
                     <span class="calendar-month" onclick="changeMonth()">March</span>
                     <span class="calendar-year" onclick="changeYear()">2020</span>
-                    <span class="calendar-right" onclick="nextMonth()"><img class="icon" src="icons/arrow-right.png" /></span>
+                    <span class="calendar-right" onclick="nextMonth()"><img class="icon-small-circular" src="icons/arrow-right.png" /></span>
                 </div>
                 <div class="calendar-container">
                     <div class="calendar-header">Sun</div>
@@ -156,17 +156,17 @@
         <div class="row"><div><input type="checkbox" id="reminderAllDay-edit" onclick="toggleTimeTb('reminderAllDay-edit');"/><span>All Day</span></div></div>
         <div class="row">
             <span class="button red-bg tooltip-parent" id="btnReminderDelete" onclick="modifyReminder('delete');">
-                <img class="floating-icon" src="icons/trash.png" />
+                <img class="icon" src="icons/trash.png" />
                 <div class="tooltip">Delete Reminder</div>
                 <div style="margin-left: 3%;">Delete</div>
             </span>
             <span class="button green-bg tooltip-parent" id="btnReminderDone" onclick="modifyReminder('done');">
-                <img class="floating-icon" src="icons/done.png" />
+                <img class="icon" src="icons/done.png" />
                 <div class="tooltip">Task Completed</div>
                 <div style="margin-left: 10%;">Done</div>
             </span>
             <span class="button blue-bg tooltip-parent" id="btnReminderSave" onclick="modifyReminder('save');">
-                <img class="floating-icon" src="icons/save.png" />
+                <img class="icon" src="icons/save.png" />
                 <div class="tooltip">Save</div>
                 <div style="margin-left: 10%;">Save</div>
             </span>
@@ -178,7 +178,7 @@
     
     <!-- Load home.html scripts. (Order matters!) -->
     <script src="scripts/tasks.js"></script>
-    <script src="scripts/sidebar.js"></script>
+    <script src="scripts/controls.js"></script>
     <script src="scripts/home.js"></script>
 </body>
 </html>
