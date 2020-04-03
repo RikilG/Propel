@@ -1,5 +1,6 @@
 let menuToggle = false
 let menuItems = ["reminder", "event", "notes", "todo", "goal"] // same as what's in databaseZ
+let yearSelection = false
 /*
 reminder - set something to be reminded of - google calendar? - onetime
 event - events like bday's etc - can occor repetitively
@@ -60,6 +61,7 @@ function dateToText(date) {
 }
 
 function buildCalendar(datetime) {
+    yearSelection = false
     let month = datetime.getMonth()
     let year = datetime.getFullYear()
     let initialDate = new Date(year, month, 1)
@@ -85,9 +87,14 @@ function buildCalendar(datetime) {
         temp.classList.add("calendar-item")
         temp.classList.add("date-"+i)
         temp.date = i
-        temp.onclick = (mouseEvent) => dateSelected(year, month, mouseEvent.target.date)
+        temp.onclick = (mouseEvent) => {
+            let temp = document.querySelector('.yellow-bg')
+            if (temp) temp.classList.remove('yellow-bg')
+            mouseEvent.target.classList.add('yellow-bg')
+            dateSelected(year, month, mouseEvent.target.date)
+        }
         if(new Date(year, month, i).getDay() == 0) {// if sunday, paint orange, remove left border
-            temp.style.backgroundColor = "rgb(255, 175, 84)"
+            temp.classList.add('orange-bg')
             temp.style.borderLeft = "0"
         }
         temp.innerHTML = i
@@ -103,7 +110,7 @@ function buildCalendar(datetime) {
     window.localStorage.setItem('month', month)
     let d = new Date(window.localStorage.getItem('today'))
     if(month == d.getMonth() && year == d.getFullYear())
-        document.querySelector(".date-"+d.getDate()).style.backgroundColor = "lightgreen"
+        document.querySelector(".date-"+d.getDate()).classList.add('green-bg')
     document.querySelector(".calendar-year").innerHTML = year
     document.querySelector(".calendar-month").innerHTML = monthToText(month)
 }
@@ -178,6 +185,10 @@ function toggleNewMenu(action) { // called in html by plus button
 }
 
 function prevMonth() {
+    if (yearSelection) {
+        window.localStorage.setItem('year', parseInt(window.localStorage.getItem('year'))-34)
+        return changeYear()
+    }
     let month = parseInt(window.localStorage.getItem('month'))
     let year = parseInt(window.localStorage.getItem('year'))
     if(month == 0) {
@@ -190,6 +201,10 @@ function prevMonth() {
 }
 
 function nextMonth() {
+    if (yearSelection) {
+        window.localStorage.setItem('year', parseInt(window.localStorage.getItem('year'))+34)
+        return changeYear()
+    }
     let month = parseInt(window.localStorage.getItem('month'))
     let year = parseInt(window.localStorage.getItem('year'))
     if(month == 11) {
@@ -202,27 +217,31 @@ function nextMonth() {
 }
 
 function changeMonth() {
+    yearSelection = false
     let calendar = document.querySelector(".calendar-container")
+    let currentMonth = window.localStorage.getItem('month')
     calendar.innerHTML = ""
-    for(var i=0;i<7;i++) {
+    for(let i=0;i<7;i++) {
         let temp1 = document.createElement('div')
         temp1.classList.add('calendar-item')
         calendar.append(temp1)
     }
-    for(var x=0;x<12;x++) {
+    for(let x=0;x<12;x++) {
         let temp = document.createElement('div')
         temp.classList.add('calendar-item')
         temp.innerHTML = monthToText(x)
         temp.style.fontSize = "21px"
         temp.month = x
+        if(x == currentMonth) temp.classList.add('green-bg')
         temp.onclick = (mouseEvent) => {
             let monthEvent = mouseEvent.target
             datetime = new Date(window.localStorage.getItem('year'), monthEvent.month, 1)
+            yearSelection = false
             buildCalendar(datetime)
         }
         calendar.append(temp)
     }
-    for(var i=0;i<2;i++) {
+    for(let i=0;i<2;i++) {
         let temp1 = document.createElement('div')
         temp1.classList.add('calendar-item')
         calendar.append(temp1)
@@ -230,9 +249,33 @@ function changeMonth() {
 }
 
 function changeYear() {
+    yearSelection = true
     let calendar = document.querySelector(".calendar-container")
     calendar.innerHTML = ""
-    
+    for(let i=0;i<7;i++) {
+        let temp1 = document.createElement('div')
+        temp1.classList.add('calendar-item')
+        calendar.append(temp1)
+    }
+    let currentYear = window.localStorage.getItem('year')
+    let startYear = currentYear - 17
+    for(let i=startYear;i<startYear+35;i++) {
+        let temp = document.createElement('div')
+        temp.classList.add('calendar-item')
+        if (i==new Date().getFullYear()) temp.classList.add('green-bg')
+        temp.innerHTML = i
+        temp.style.fontSize = "21px"
+        temp.year = i
+        temp.onclick = (mouseEvent) => {
+            let yearEvent = mouseEvent.target
+            datetime = new Date(yearEvent.year, 0, 1)
+            window.localStorage.setItem('year', i)
+            window.localStorage.setItem('selectedDate', `${i}-${1}-${1}`)
+            document.querySelector(".calendar-year").innerHTML = i
+            changeMonth()
+        }
+        calendar.append(temp)
+    }
 }
 
 var datetime = new Date() // get todays date

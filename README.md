@@ -26,11 +26,11 @@
   </p>
 </p>
 
-<p align="center">
+<div align="center">
 <a href="https://github.com/RikilG/ProPl">
   <img src="design/screenshot.png" alt="Logo" width="600" height="480">
 </a>
-</p>
+</div>
 
 
 ## Table of Contents
