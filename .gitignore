@@ -1,7 +1,8 @@
 ### My Ignores ###
 test
 # Database files
-database/*.db
+database/*
+!database/README.md
 # my changelog file
 changelog
 

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Diary</title>
+    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <link rel="stylesheet" href="css/diary.css" />
+    <link rel="stylesheet" href="css/controls.css" />
+    <link rel="stylesheet" href="css/colors.css" />
+</head>
+<body>
+     <!-- The sidebar -->
+    <div id="iSideBar" class="sidebar">
+        <div class="user-info">UserName</div>
+        <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
+        <a href="home.html">Scheduler</a>
+        <a href="#notes">Notes</a>
+        <a class="active" href="diary.html">Diaries</a>
+        <a href="#about">About</a>
+        <a class="sidebar-settings" href="settings.html">Settings</a>
+    </div>
+
+    <!-- The navbar. add side-push in class for sidebar push animation-->
+    <div id="iNavBar" class="navbar side-push">
+        <span onclick="openSidebar()"><img class="menu-icon" src="icons/menu.png" /></span>
+        <span class="nav-title">ProPl</span>
+        <span class="nav-heading">Diary</span>
+        <span class="nav-end">
+            <span class="nav-item">Hello</span>
+            <span class="nav-item">World</span>
+            <span class="nav-item nav-status">Online/UserName</span>
+        </span>
+    </div>
+
+    <!-- Overlay -->
+    <div id="overlay" onclick="hideOverlay()"></div>
+
+    <!-- Notification -->
+    <div id="notification" onclick="hideNotification()"></div>
+
+    <!-- Floating action button for new task and today-->
+    <div class="floating-actions">
+        <div class="fab floating-main tooltip-parent" onclick="newEntry()">
+            <img class="floating-icon" src="icons/newpage.png" />
+            <div class="tooltip">New Entry</div>
+        </div>
+    </div>
+    <div class="floating-second">
+        <div class="fab tooltip-parent" onclick="showOverlay(5);document.getElementById('newDiaryBox').style.display = 'block'">
+            <img class="floating-icon" src="icons/newbook.png" />
+            <div class="tooltip">New Diary</div>
+        </div>
+    </div>
+
+    <!-- Page content. add side-push in class for sidebar push animation-->
+    <div class="content side-push">
+        <div class="root-container">
+            <div class="root-item diary-list-container">
+                <div id="diary-list-header" align="center">
+                    Your Diaries
+                </div>
+                <div id="diary-list-content">
+                    
+                </div>
+            </div>
+            <div class="root-item diary-entries-list">
+                <div id="diary-entries-header">
+                    Lets start writing!
+                </div>
+                <div id="diary-entries-content">
+                    
+                </div>
+            </div>
+        </div>
+
+        <!-- new Task Boxes/overlays -->
+        <div class="specialBox" id="newDiaryBox">
+            <div class="title">New Diary</div>
+            <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
+            <input type="text" class="textbox-main" id="tbDiaryTitleNew" placeholder="Diary name" />
+            <!-- <div class="row"><div><input type="checkbox" id="reminderAllDay-new" onclick="toggleTimeTb('reminderAllDay-new')"/><span>All Day</span></div></div> -->
+            <div class="row"><span class="button" onclick="createDiary()">Save</span></div>
+            <div class="description">
+                Create new diary or journal to hold you thoughts. It can be as crazy 
+                as dream catcher or as simple as current year
+            </div>
+        </div>
+        <div class="specialBox" id="newEntryBox">
+            <div class="title" >Add Diary Entry</div>
+            <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
+            <div class="row">
+                <span class="label" >Entry Date :</span>
+                <span>
+                <span>Date :</span><input type="number" min="1" max="31" id="tbEntryD-new" class="textbox-small" placeholder="DD"/>
+                <span>Month :</span><input type="number" min="1" max="12" id="tbEntryM-new" class="textbox-small" placeholder="MM"/>
+                <span>Year :</span><input type="number" min="1000" id="tbEntryY-new" class="textbox-small-long" placeholder="YY"/>
+                </span>
+            </div>
+            <div class="row">
+                <input id="user-diary-entry-title" class="textbox-main" type="text" placeholder="Title (optional)"/>
+            </div>
+            <div class="row">
+                <textarea id="user-diary-entry-content">
+
+                </textarea>
+            </div>
+            <div class="row">
+                <div id="dropdown-container">
+                    <label for="diaries-list">Diary :</label>
+                    <select id="diaries-list" name="diaries-list">
+                        <option value="test">Test</option>
+                    </select>
+                </div>
+                <span class="button" onclick="createEntry()">Save</span>
+            </div>
+            <div class="description">
+                Add your memories for today!
+            </div>
+        </div>
+    </div>
+
+    <!-- edit task boxes/overlays -->
+    <div class="specialBox" id="editEntryBox">
+        <div class="title" >Edit Diary Entry</div>
+        <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
+        <div class="row">
+            <span class="label" >Entry Date :</span>
+            <span>
+            <span>Date :</span><input type="number" min="1" max="31" id="tbEntryD-edit" class="textbox-small" placeholder="DD"/>
+            <span>Month :</span><input type="number" min="1" max="12" id="tbEntryM-edit" class="textbox-small" placeholder="MM"/>
+            <span>Year :</span><input type="number" min="1000" id="tbEntryY-edit" class="textbox-small-long" placeholder="YY"/>
+            </span>
+        </div>
+        <div class="row">
+            <input id="user-diary-entry-title-edit" class="textbox-main" type="text" placeholder="Title (optional)"/>
+        </div>
+        <div class="row">
+            <textarea id="user-diary-entry-content-edit">
+
+            </textarea>
+        </div>
+        <!-- <div class="row"><div><input type="checkbox" id="reminderAllDay-edit" onclick="toggleTimeTb('reminderAllDay-edit');"/><span>All Day</span></div></div> -->
+        <div class="row">
+            <span class="button red-bg tooltip-parent" id="btnEntryDelete" onclick="hideOverlay();document.getElementById('deleteConfirmBox').style.display = 'block';showOverlay(5)">
+                <img class="icon" src="icons/trash.png" />
+                <div class="tooltip">Delete Entry</div>
+                <div style="margin-left: 3%;">Delete</div>
+            </span>
+            <span class="button blue-bg tooltip-parent" id="btnEntryEdit" onclick="viewEntry(null)">
+                <img class="icon" src="icons/notes.png" />
+                <div class="tooltip">Edit</div>
+                <div style="margin-left: 10%;">Edit</div>
+            </span>
+            <span class="button blue-bg tooltip-parent" id="btnEntrySave" onclick="viewEntry(null)">
+                <img class="icon" src="icons/save.png" />
+                <div class="tooltip">Save Entry</div>
+                <div style="margin-left: 10%;">Save</div>
+            </span>
+        </div>
+        <div class="description">
+            Edit your entry here.
+        </div>
+    </div>
+    <div class="specialBox" id="deleteConfirmBox">
+        <div class="title">Do you really want to delete this entry? <em>This action cannot be Undone!</em></div>
+        <div class="row">
+            <span class="button red-bg tooltip-parent" id="btnEntryDelete" onclick="deleteEntry();">
+                <img class="icon" src="icons/trash.png" />
+                <div class="tooltip">Yes, Delete Entry</div>
+                <div style="margin-left: 3%;">Yes</div>
+            </span>
+            <span class="button green-bg tooltip-parent" id="btnEntryEdit" onclick="hideOverlay()">
+                <img class="icon" src="icons/book2.png" />
+                <div class="tooltip">No, Keep Entry</div>
+                <div style="margin-left: 10%;">No</div>
+            </span>
+        </div>
+    </div>
+
+    <!-- Templates -->
+    <div id="diary-entry-template">
+        <div id="diary-entry-title" class="diary-entry-title"></div>
+        <div id="diary-entry-date" class="diary-entry-date"></div>
+    </div>
+    
+    <!-- Load home.html scripts. (Order matters!) -->
+    <script src="scripts/controls.js"></script>
+    <script src="scripts/diary.js"></script>
+</body>
+</html>

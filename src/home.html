@@ -40,6 +40,20 @@
     <!-- Notification -->
     <div id="notification" onclick="hideNotification()"></div>
 
+    <!-- Floating action button for new task and today-->
+    <div class="floating-actions">
+        <div class="floating-item floating-main tooltip-parent" onclick="toggleNewMenu()">
+            <img class="floating-icon" src="icons/plus.png" />
+            <div class="tooltip">New</div>
+        </div>
+    </div>
+    <div class="floating-second">
+        <div class="fab tooltip-parent" onclick="let today=new Date();buildCalendar(today);dateSelected(today.getFullYear(), today.getMonth(), today.getDate());">
+            <img class="floating-icon" src="icons/today.png" />
+            <div class="tooltip">Today</div>
+        </div>
+    </div>
+
     <!-- Page content. add side-push in class for sidebar push animation-->
     <div class="content">
         <div class="root-container">
@@ -73,20 +87,6 @@
             </div>
         </div>
 
-        <!-- Floating action button for new task and today-->
-        <div class="floating-actions">
-            <div class="floating-item floating-main tooltip-parent" onclick="toggleNewMenu()">
-                <img class="floating-icon" src="icons/plus.png" />
-                <div class="tooltip">New</div>
-            </div>
-        </div>
-        <div class="floating-today">
-            <div class="fab tooltip-parent" onclick="let today=new Date();buildCalendar(today);dateSelected(today.getFullYear(), today.getMonth(), today.getDate());">
-                <img class="floating-icon" src="icons/today.png" />
-                <div class="tooltip">Today</div>
-            </div>
-        </div>
-
         <!-- new Task Boxes/overlays -->
         <div class="specialBox" id="newReminderBox">
             <div class="title">New Reminder</div>
@@ -96,8 +96,8 @@
             <div class="row">
                 <span class="label" >Time :</span>
                 <span>
-                <span>HH:</span><input type="text" id="reminderTimeHTb" class="textbox-small" placeholder="HH"/>
-                <span>MM:</span><input type="text" id="reminderTimeMTb" class="textbox-small" placeholder="MM"/>
+                <span>HH:</span><input type="number" min="0" max="23" id="reminderTimeHTb" class="textbox-small" placeholder="HH"/>
+                <span>MM:</span><input type="number" min="0" max="59" id="reminderTimeMTb" class="textbox-small" placeholder="MM"/>
                 </span>
             </div>
             <!-- <div class="row"><span class="label" >Repeat :</span><input type="text" class="textbox" /></div> -->
@@ -148,8 +148,8 @@
         <div class="row">
             <span class="label" >Time :</span>
             <span>
-            <span>HH:</span><input type="text" id="reminderTimeHTb-edit" class="textbox-small" placeholder="HH"/>
-            <span>MM:</span><input type="text" id="reminderTimeMTb-edit" class="textbox-small" placeholder="MM"/>
+            <span>HH:</span><input type="number" min="0" max="23" id="reminderTimeHTb-edit" class="textbox-small" placeholder="HH"/>
+            <span>MM:</span><input type="number" min="0" max="59" id="reminderTimeMTb-edit" class="textbox-small" placeholder="MM"/>
             </span>
         </div>
         <!-- <div class="row"><span class="label" >Repeat :</span><input type="text" class="textbox" /></div> -->

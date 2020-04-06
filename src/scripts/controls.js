@@ -10,6 +10,7 @@ function showOverlay(z) {
 function hideOverlay() {
     var overlay = document.getElementById('overlay')
     let closeList = document.querySelectorAll('.specialBox')
+    // close popuups
     closeList.forEach((value, index) => {
         value.style.display = "none"
     })
@@ -18,8 +19,11 @@ function hideOverlay() {
     document.getElementById("iSideBar").style.width = "0";
     if ( document.querySelectorAll(".side-push").length > 0 )
         document.querySelectorAll(".side-push").forEach((value, index) => value.style.marginLeft = "0")
-    // document.body.style.backgroundColor = "white";
+    // hide overlay
     overlay.style.display = "none"
+    // convert buttons back to normal
+    if (document.getElementById('btnEntryEdit')) document.getElementById('btnEntryEdit').style.display = "block"
+    if (document.getElementById('btnEntrySave')) document.getElementById('btnEntrySave').style.display = "none"
 }
 
 /* Set the width of the side navigation to 250px and the left margin of the page content to 
