@@ -1,4 +1,4 @@
-const crypto = require(process.cwd() + '/src/scripts/cryptoUtils')
+// const crypto = require(process.cwd() + '/src/scripts/cryptoUtils')
 const diarydb = process.cwd() + '/database/diaries'
 
 const fs = require('fs')

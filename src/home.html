@@ -155,7 +155,7 @@
         <!-- <div class="row"><span class="label" >Repeat :</span><input type="text" class="textbox" /></div> -->
         <div class="row"><div><input type="checkbox" id="reminderAllDay-edit" onclick="toggleTimeTb('reminderAllDay-edit');"/><span>All Day</span></div></div>
         <div class="row">
-            <span class="button red-bg tooltip-parent" id="btnReminderDelete" onclick="modifyReminder('delete');">
+            <span class="button red-bg tooltip-parent" id="btnReminderDelete" onclick="hideOverlay();document.getElementById('deleteConfirmBox').style.display = 'block';showOverlay(5)">
                 <img class="icon" src="icons/trash.png" />
                 <div class="tooltip">Delete Reminder</div>
                 <div style="margin-left: 3%;">Delete</div>
@@ -173,6 +173,21 @@
         </div>
         <div class="description">
             
+        </div>
+    </div>
+    <div class="specialBox" id="deleteConfirmBox">
+        <div class="title">Do you really want to delete this entry? <em>This action cannot be Undone!</em></div>
+        <div class="row">
+            <span class="button red-bg tooltip-parent" id="btnEntryDelete" onclick="modifyReminder('delete');">
+                <img class="icon" src="icons/trash.png" />
+                <div class="tooltip">Yes, Delete</div>
+                <div style="margin-left: 3%;">Yes</div>
+            </span>
+            <span class="button green-bg tooltip-parent" id="btnEntryEdit" onclick="hideOverlay()">
+                <img class="icon" src="icons/book2.png" />
+                <div class="tooltip">No, Keep</div>
+                <div style="margin-left: 10%;">No</div>
+            </span>
         </div>
     </div>
     

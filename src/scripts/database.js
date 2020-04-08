@@ -4,8 +4,7 @@ var database = null
 async function getDatabase() {
     if (database) return database
 
-    // TODO: remove this hardcoding
-    database = await new sqlite3.Database("/mnt/STASH/@RIKIL/_Projects/@programming/Electron/ProPl/database/calendar.db", sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+    database = await new sqlite3.Database(process.cwd() + "/database/calendar.db", sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
         if (err) console.log(err.message)
     })
 
@@ -49,6 +48,12 @@ async function getDatabase() {
                 rt_end_datetime INTEGER,
                 rt_repeat_interval TEXT
             );
+        `, (err) => { if (err) console.log(err) })
+        database.run(`INSERT OR IGNORE INTO types VALUES
+            (1, "reminder"), (2, "event"), (3, "notes"), (4, "todo"), (5, "goal");
+        `, (err) => { if (err) console.log(err) })
+        .run(`INSERT OR IGNORE INTO profiles VALUES 
+            (1, "default");
         `, (err) => { if (err) console.log(err) })
     })
     // localStorage.setItem('database', database)

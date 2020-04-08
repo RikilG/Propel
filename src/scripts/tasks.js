@@ -276,7 +276,7 @@ function modifyReminder(command) {
                 notify(err, "red")
                 return
             }
-            database.run(`UPDATE single_tasks SET st_start_datetime=?, st_end_datetime=? WHERE t_id=?;`, [sdatetime, edatetime, t_id], (err) => {
+            database.run(`UPDATE single_tasks SET st_start_datetime=?, st_end_datetime=? WHERE t_id=?;`, [sdatetime/1000, edatetime/1000, t_id], (err) => {
                 if (err) notify(err, "red")
                 else {
                     notify("saved successfully!")
