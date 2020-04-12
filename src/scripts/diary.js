@@ -1,4 +1,4 @@
-// const crypto = require(process.cwd() + '/src/scripts/cryptoUtils')
+const crypto = require(process.cwd() + '/src/scripts/cryptoUtils')
 const diarydb = process.cwd() + '/database/diaries'
 
 const fs = require('fs')
@@ -6,6 +6,8 @@ const os = require('os')
 const sep = (os.platform()==='win32')?`\\`:`/`;
 
 let diaryList = []
+let selectedDiaryProps = {}
+let selectedDiaryPass = null
 let selectedDiary = ""
 let selectedEntry = ""
 
@@ -25,16 +27,33 @@ function getFiles(source) {
     .map(dirent => dirent.name)
 }
 
+function loadDiaryProps() {
+    try {
+        selectedDiaryProps = JSON.parse(fs.readFileSync(diarydb+sep+selectedDiary+sep+"props.json"))
+    } catch(err) {
+        notify(err, "red")
+    }
+}
+
 function diarySelected(diaryDiv) {
     let diaryName = selectedDiary
-    if(diaryDiv) diaryName = diaryDiv.innerHTML
-    document.getElementById('diary-entries-content').innerHTML = ""
-    document.getElementById('diary-entries-header').innerHTML = diaryName
-    selectedDiary = diaryName
     if(diaryDiv) {
+        diaryName = diaryDiv.innerHTML
         document.querySelectorAll('.yellow-bg').forEach((element, index) => element.classList.remove('yellow-bg'))
         diaryDiv.classList.add('yellow-bg')
     }
+    document.getElementById('diary-entries-content').innerHTML = ""
+    document.getElementById('diary-entries-header').innerHTML = diaryName
+    selectedDiary = diaryName
+    loadDiaryProps()
+    if (selectedDiaryProps.passwordProtected && (selectedDiaryPass == null || !crypto.verifyHash(selectedDiaryProps.passwordHash, selectedDiaryPass))) {
+        showOverlay(5)
+        document.querySelector("#diaryPasswdBox .title").innerHTML = "Enter Password for " + selectedDiary
+        document.getElementById('diaryPasswdBox').style.display = "block"
+        document.getElementById('diary-entries-content').innerHTML = ""
+        return
+    }
+    if (selectedDiaryPass != null && !crypto.verifyHash(selectedDiaryProps.passwordHash, selectedDiaryPass)) selectedDiaryPass = null
     listEntries(diaryName)
 }
 
@@ -55,7 +74,7 @@ function listDiaries() {
 }
 
 function listEntries(diaryname) {
-    let entries = getFiles(diarydb + sep + diaryname)
+    let entries = getFiles(diarydb + sep + diaryname).filter((value, index) => {return value != "props.json"})
     let container = document.getElementById('diary-entries-content')
     container.innerHTML = ""
     entries.sort((a,b) => {
@@ -81,10 +100,18 @@ function listEntries(diaryname) {
 
 function createDiary() {
     let name = document.getElementById('tbDiaryTitleNew')
+    let encrypted = document.getElementById('chkEncryptedNew').checked
+    let chkPasswd = document.getElementById('chkPasswordNew')
+    let passwd = document.getElementById('tbPassNew')
+    let passwdR = document.getElementById('tbPassNewR')
+    let passwdHash = crypto.hash("propel")
     if (name.value == "") {
         notify("Invalid diary name", "red")
         return
     }
+    if(encrypted && chkPasswd.checked && passwd.value != passwdR.value) return notify("Passwords do not match")
+    if(encrypted && chkPasswd.checked && passwd.value == "") return notify("I can't encrypt with an empty password!")
+    if(encrypted && chkPasswd.checked && passwd.value != "") passwdHash = crypto.hash(passwd.value)
     if(fs.existsSync(diarydb+sep+name.value.capitalize())) {
         notify('Already a diary exists with the same name.', "red")
         return
@@ -92,10 +119,21 @@ function createDiary() {
     fs.mkdir(diarydb+sep+name.value.capitalize(), (err) => {
         if(err) notify(err, "red")
         else {
-            notify('Diary Successfully created!')
-            name.value = ""
-            hideOverlay()
-            listDiaries()
+            props = {
+                diaryName: name.value.capitalize(),
+                encrypted: encrypted,
+                passwordProtected: chkPasswd.checked,
+                passwordHash: passwdHash
+            }
+            fs.writeFile(diarydb+sep+name.value.capitalize()+sep+"props.json", JSON.stringify(props), (err) => {
+                if (err) notify(err, "red")
+                else {
+                    notify('Diary Successfully created!')
+                    name.value = ""
+                    hideOverlay()
+                    listDiaries()
+                }
+            })
         }
     })
 }
@@ -128,6 +166,7 @@ function viewEntry(filename) {
     let date = document.getElementById('tbEntryD-edit')
     let month = document.getElementById('tbEntryM-edit')
     let year = document.getElementById('tbEntryY-edit')
+    let passwd = document.getElementById('tbPassEditEntry')
     
     if(filename == null) {
         title.disabled = false;
@@ -140,15 +179,21 @@ function viewEntry(filename) {
         btnEdit.style.display = "none"
         btnSave.style.display = "block"
         btnSave.onclick = () => {
+            if (selectedDiaryProps.passwordProtected && !crypto.verifyHash(selectedDiaryProps.passwordHash, passwd.value)) return notify("Incorrect Password", "red")
             deleteEntry(true)
-            createEntry(title.value, content.value, parseInt(date.value), parseInt(month.value), parseInt(year.value), selectedDiary)
+            createEntry(title.value, content.value, parseInt(date.value), parseInt(month.value), parseInt(year.value), selectedDiary, passwd.value)
+            passwd.value = ""
         }
         return
     }
     
     selectedEntry = filename
-    let data = fs.readFileSync(diarydb + sep + selectedDiary + sep + filename)
-    // TODO: decode data here
+    let data = fs.readFileSync(diarydb + sep + selectedDiary + sep + filename).toString()
+    //TODO: decrypt data here
+    if (selectedDiaryProps.encrypted) {
+        if (selectedDiaryProps.passwordProtected) data = crypto.decrypt(data, selectedDiaryPass)
+        else data = crypto.decrypt(data, "propel")
+    }
     let entry = JSON.parse(data)
     document.getElementById('editEntryBox').style.display = "block"
     showOverlay(5)
@@ -173,7 +218,7 @@ function deleteEntry(nonotify) {
     })
 }
 
-function createEntry(ptitle, pcontent, pdate, pmonth, pyear, pdiary) {
+function createEntry(ptitle, pcontent, pdate, pmonth, pyear, pdiary, pPasswd) {
     let title = ptitle || document.getElementById('user-diary-entry-title').value
     title = title.capitalize()
     let content = pcontent || document.getElementById('user-diary-entry-content').value
@@ -181,6 +226,7 @@ function createEntry(ptitle, pcontent, pdate, pmonth, pyear, pdiary) {
     let month = pmonth || parseInt(document.getElementById('tbEntryM-new').value)
     let year = pyear || parseInt(document.getElementById('tbEntryY-new').value)
     let diary = pdiary || document.getElementById('diaries-list').value
+    let passwd = pPasswd || document.getElementById('tbPassEntry').value
 
     if(diaryList.length == 0) return notify("You don't have a diary yet! create one to store your entries")
     if(content.trim() == "") return notify("Its a waste of space to store empty entries!")
@@ -197,19 +243,51 @@ function createEntry(ptitle, pcontent, pdate, pmonth, pyear, pdiary) {
     if (fs.existsSync(filepath)) {
         return notify("A file already exists for the given date and title. consider editing corresponding file")
     }
-
+    selectedDiary = diary
+    loadDiaryProps()
     // TODO: encrypt data here
+    console.log
+    if (selectedDiaryProps.encrypted) {
+        if (selectedDiaryProps.passwordProtected) {
+            if(!crypto.verifyHash(selectedDiaryProps.passwordHash, passwd)) {
+                return notify("Incorrect Password, gotta keep a tab on that memory of yours!", "red")
+            }
+            data = crypto.encrypt(data, passwd)
+        }
+        else {
+            data = crypto.encrypt(data, "propel")
+        }
+    }
     fs.writeFile(filepath, data, (err) => {
         if (err) notify(err, "red")
         else {
             document.getElementById('user-diary-entry-title').value = ""
             document.getElementById('user-diary-entry-content').value = ""
+            document.getElementById('tbPassEntry').value = ""
             hideOverlay()
             diarySelected()
             if(ptitle) notify("Entry edited successfully")
             else notify("Entry created successfully.")
         }
     })
+}
+
+function toggleNewDiaryEncryption(chkbox) {
+    let en = document.getElementById('chkPasswordNew')
+    if (chkbox != en)
+        en.disabled = !chkbox.checked
+    document.getElementById('tbPassNew').disabled = !chkbox.checked || !en.checked
+    document.getElementById('tbPassNewR').disabled = !chkbox.checked || !en.checked
+}
+
+function verifyDiaryPass() {
+    let passwd = document.getElementById('tbPass').value
+    if (!crypto.verifyHash(selectedDiaryProps.passwordHash, passwd)) return notify("Incorrect Password! keep tryi'n more", "red")
+    document.getElementById('tbPass').value = ""
+    hideOverlay()
+    selectedDiaryPass = passwd
+    listEntries(selectedDiary)
+    notify("Password accepted.")
 }
 
 // create a diary store location if not exists

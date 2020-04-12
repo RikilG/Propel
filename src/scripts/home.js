@@ -109,8 +109,10 @@ function buildCalendar(datetime) {
     window.localStorage.setItem('year', year)
     window.localStorage.setItem('month', month)
     let d = new Date(window.localStorage.getItem('today'))
-    if(month == d.getMonth() && year == d.getFullYear())
+    if(month == d.getMonth() && year == d.getFullYear()) {
         document.querySelector(".date-"+d.getDate()).classList.add('green-bg')
+        document.querySelector(".date-"+d.getDate()).classList.remove('orange-bg')
+    }
     document.querySelector(".calendar-year").innerHTML = year
     document.querySelector(".calendar-month").innerHTML = monthToText(month)
 }

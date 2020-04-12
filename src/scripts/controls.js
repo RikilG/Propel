@@ -51,6 +51,7 @@ function notify(text, color) {
     n.innerHTML = text
     if(color == "red") {
         n.style.backgroundColor = "rgba(199, 68, 35, 0.8)"
+        console.log(text)
     }
     else {
         n.style.backgroundColor = "rgba(32, 108, 179, 0.9)"

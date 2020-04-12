@@ -79,11 +79,27 @@
             <div class="title">New Diary</div>
             <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
             <input type="text" class="textbox-main" id="tbDiaryTitleNew" placeholder="Diary name" />
-            <!-- <div class="row"><div><input type="checkbox" id="reminderAllDay-new" onclick="toggleTimeTb('reminderAllDay-new')"/><span>All Day</span></div></div> -->
+            <div class="row"><div><input type="checkbox" class="checkbox" id="chkEncryptedNew" onclick="toggleNewDiaryEncryption(this)" /><span>Encrypt (Store in gibberish rather than plain text so that people/dropbox can't snoop/access)</span></div></div>
+            <div class="row"><div><input type="checkbox" class="checkbox" id="chkPasswordNew" onclick="toggleNewDiaryEncryption(this)" disabled /><span>Set Password (You will loose your diary if you forget it. Read NOTE in below description)</span></div></div>
+            <div class="row"><span>Password :</span><input type="password" class="textbox-long" id="tbPassNew" placeholder="Password" disabled /></div>
+            <div class="row"><span>Re-type :</span><input type="password" class="textbox-long" id="tbPassNewR" placeholder="Retype Password" disabled /></div>
             <div class="row"><span class="button" onclick="createDiary()">Save</span></div>
             <div class="description">
                 Create new diary or journal to hold you thoughts. It can be as crazy 
-                as dream catcher or as simple as current year
+                as dream catcher or as simple as current year. <br />
+                NOTE: Setting password is not preffered unless you really need high 
+                security as password-less encrypted diaries can only opened by this application. 
+                If you still prefer password, please note it down somewhere safe as there is no 
+                way to recover encrypted diaries without user password.
+            </div>
+        </div>
+        <div class="specialBox" id="diaryPasswdBox">
+            <div class="title">Enter Password</div>
+            <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
+            <div class="row"><input type="password" class="textbox-main" id="tbPass" placeholder="Password" /></div>
+            <div class="row"><span class="button" onclick="verifyDiaryPass()">Open Sesame!</span></div>
+            <div class="description">
+                Enter your password to decrypt your dear diary.
             </div>
         </div>
         <div class="specialBox" id="newEntryBox">
@@ -112,6 +128,7 @@
                         <option value="test">Test</option>
                     </select>
                 </div>
+                <input type="password" class="textbox-long" id="tbPassEntry" placeholder="Password(if exists)" />
                 <span class="button" onclick="createEntry()">Save</span>
             </div>
             <div class="description">
@@ -141,6 +158,7 @@
             </textarea>
         </div>
         <!-- <div class="row"><div><input type="checkbox" id="reminderAllDay-edit" onclick="toggleTimeTb('reminderAllDay-edit');"/><span>All Day</span></div></div> -->
+        <div class="row"><span>Password :</span><input type="password" id="tbPassEditEntry" class="textbox-long" /></div>
         <div class="row">
             <span class="button red-bg tooltip-parent" id="btnEntryDelete" onclick="hideOverlay();document.getElementById('deleteConfirmBox').style.display = 'block';showOverlay(5)">
                 <img class="icon" src="icons/trash.png" />

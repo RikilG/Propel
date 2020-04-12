@@ -37,7 +37,7 @@
     order: 2;
     flex: 3 auto;
     min-width: 450px;
-    padding: 1em 2em;
+    padding: 1em;
     padding-right: 0.5em;
 }
 
@@ -73,6 +73,7 @@
     font-size: 1.2em;
     border-radius: 0.5em;
     cursor: pointer;
+    overflow: hidden;
     transition: 0.3s;
 }
 
