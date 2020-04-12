@@ -10,7 +10,7 @@ Core requirements which need more attention
  - [ ] Scheduler - Setting up events, alarms, remainders for each day
  - [ ] Scheduler - Ability to support recuring tasks
  - [ ] Scheduler - Automated analysis of work done(schedule followed or ToDo's done) (in percentage completed)
- - [ ] Diary - Maintain multiple diaries/journals
+ - [x] Diary - Maintain multiple diaries/journals
 
 
 ## Additional Requirements

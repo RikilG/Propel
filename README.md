@@ -26,11 +26,11 @@
   </p>
 </p>
 
-<div align="center">
+<!-- <div align="center">
 <a href="https://github.com/RikilG/ProPl">
   <img src="design/screenshot.png" alt="Logo" width="600" height="480">
 </a>
-</div>
+</div> -->
 
 
 ## Table of Contents
@@ -39,10 +39,12 @@
 - [About The Project](#about-the-project)
   - [Built With](#built-with)
 - [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Dependencies](#dependencies)
   - [Installation](#installation)
+  - [Dependencies](#dependencies)
 - [Usage](#usage)
+- [Screenshots](#screenshots)
+  - [Scheduler](#scheduler)
+  - [Diary](#diary)
 - [Ideas](#ideas)
 - [Contributing](#contributing)
 - [License](#license)
@@ -50,8 +52,16 @@
 
 ## About The Project
 
-<!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
-This is still an alpha build and is in early stages of development...
+This application aims to be an all-in-one application all your todos, events, reminders, notes and diaries. Basically, it tries 
+digitize all you paper needs. The main motive for me to build this project is that i usually scribble lot of stuff which 
+i think are important and forget about them, and later when required, i'll have to hunt for it. I also felt the need for a 
+better desktop application to mimic traditional andriod calendar.
+
+After searching the internet to find the perfect application, i gave up as i couldn't find something in which i was 
+satisfied. So, in the end, i have decided to put my skills to test, learn something worthwhile and build a perfect 
+application hand-crafted to my needs.
+
+This project is still in its early stages of development. Click [here](#screenshots) for project screenshots.
 
 
 ### Built With
@@ -63,25 +73,6 @@ This is still an alpha build and is in early stages of development...
 ## Getting Started
 
 To get a local copy up and running follow these simple steps.
-
-
-### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
-* npm
-```sh
-npm install npm@latest -g
-```
-
-
-### Dependencies
-
-This is a list of dependencies present/used in the project
- - []()
- - []()
- - []()
-
-Complete set of dependencies can be found in package.json
 
 
 ### Installation
@@ -101,11 +92,27 @@ npm start
 ```
 
 
+### Dependencies
+
+This is a list of dependencies present/used in the project:
+ - [Sqlite3](https://www.npmjs.com/package/sqlite3)
+ - [Crypto](https://nodejs.org/api/crypto.html)
+
+Complete set of dependencies can be found in package.json
+
+
 ## Usage
 
 Examples on how to use this project will be put up here once there is considerable development. 
 <!-- Additional screenshots, code examples and demos work well in this space. You may also link to more resources. You may also link to the wiki or documentation page. -->
 <!-- For more examples, please refer to the [Documentation](https://example.com)_ -->
+
+
+## Screenshots
+### Scheduler
+![Scheduler](design/home.png)
+### Diary
+![Diary](design/diary.png)
 
 
 ## Ideas
