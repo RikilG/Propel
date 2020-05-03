@@ -1,5 +1,6 @@
 ### My Ignores ###
-test
+test/
+temp/
 # Database files
 database/*
 !database/README.md

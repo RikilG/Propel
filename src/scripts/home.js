@@ -65,24 +65,25 @@ function buildCalendar(datetime) {
     let month = datetime.getMonth()
     let year = datetime.getFullYear()
     let initialDate = new Date(year, month, 1)
-    let calendar = document.querySelector(".calendar-container")
-    let day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    let calendar = document.querySelector(".calendar-dates")
+    document.querySelector(".calendar-week-days").style.display = "flex"
     calendar.innerHTML = ""
-    for(var x=0;x<7;x++) {
-        let temp = document.createElement('div')
-        temp.classList.add('calendar-header')
-        if(x == 0) temp.style.borderLeft = "0"
-        temp.innerHTML = day[x]
-        calendar.append(temp)
-    }
-    var i;
+    let rowLen = 0;
+    let row = document.createElement('div')
+    row.classList.add('calendar-row')
     for(var j=0;j<initialDate.getDay();j++) {
         let emptyDate = document.createElement("div")
         emptyDate.classList.add("calendar-item")
         emptyDate.style.cursor = "auto"
-        calendar.append(emptyDate)
+        row.append(emptyDate)
+        rowLen += 1
     }
     for(i=1;i<=monthToDays(month, year);i++) {
+        if (rowLen != 0 && rowLen % 7 == 0) {
+            calendar.append(row)
+            row = document.createElement('div')
+            row.classList.add('calendar-row')
+        }
         let temp = document.createElement("div")
         temp.classList.add("calendar-item")
         temp.classList.add("date-"+i)
@@ -97,15 +98,33 @@ function buildCalendar(datetime) {
             temp.classList.add('orange-bg')
             temp.style.borderLeft = "0"
         }
-        temp.innerHTML = i
-        calendar.append(temp)
+        let tempDateDiv = document.createElement('div')
+        tempDateDiv.innerHTML = i
+        temp.append(tempDateDiv)
+        fetchTasks(year, month, i, true, (rows) => {
+            rows.forEach((row, value) => {
+                let x = document.createElement('div')
+                x.classList.add('calendar-overlay-task')
+                x.innerHTML = row.t_name
+                temp.append(x)
+            })
+        })
+        row.append(temp)
+        rowLen += 1
     }
-    for(;i<=35 - initialDate.getDay();i++) {
+    for(;i<=42 - initialDate.getDay();i++) {
+        if (rowLen % 7 == 0) {
+            calendar.append(row)
+            row = document.createElement('div')
+            row.classList.add('calendar-row')
+        }
         let emptyDate = document.createElement("div")
         emptyDate.classList.add("calendar-item")
         emptyDate.style.cursor = "auto"
-        calendar.append(emptyDate)
+        row.append(emptyDate)
+        rowLen += 1
     }
+    calendar.append(row)
     window.localStorage.setItem('year', year)
     window.localStorage.setItem('month', month)
     let d = new Date(window.localStorage.getItem('today'))
@@ -220,14 +239,10 @@ function nextMonth() {
 
 function changeMonth() {
     yearSelection = false
-    let calendar = document.querySelector(".calendar-container")
+    let calendar = document.querySelector(".calendar-dates")
+    document.querySelector(".calendar-week-days").style.display = "none"
     let currentMonth = window.localStorage.getItem('month')
     calendar.innerHTML = ""
-    for(let i=0;i<7;i++) {
-        let temp1 = document.createElement('div')
-        temp1.classList.add('calendar-item')
-        calendar.append(temp1)
-    }
     for(let x=0;x<12;x++) {
         let temp = document.createElement('div')
         temp.classList.add('calendar-item')
@@ -252,13 +267,9 @@ function changeMonth() {
 
 function changeYear() {
     yearSelection = true
-    let calendar = document.querySelector(".calendar-container")
+    document.querySelector(".calendar-week-days").style.display = "none"
+    let calendar = document.querySelector(".calendar-dates")
     calendar.innerHTML = ""
-    for(let i=0;i<7;i++) {
-        let temp1 = document.createElement('div')
-        temp1.classList.add('calendar-item')
-        calendar.append(temp1)
-    }
     let currentYear = window.localStorage.getItem('year')
     let startYear = currentYear - 17
     for(let i=startYear;i<startYear+35;i++) {

@@ -86,65 +86,88 @@ async function editReminderOverlay(t_id) {
     })
 }
 
-async function dateSelected(year, month, date) {
-    document.querySelector("#iDate").innerHTML = dateToText(date) + " " + monthToText(month)
-    window.localStorage.setItem('selectedDate', `${year}-${month+1}-${date}`)
-    window.localStorage.setItem('date', date)
-    window.localStorage.setItem('month', month)
-    window.localStorage.setItem('year', year)
+function fetchTasks(year, month, date, today=true, callback) {
     let start_datetime = new Date(year, month, date)
     let end_datetime = new Date(year, month, date)
     end_datetime.setHours(23)
     end_datetime.setMinutes(59)
     end_datetime.setSeconds(59)
+    // 3 table join:
+    // select * from tasks t left join single_tasks st on t.t_id = st.t_id left join recuring_tasks rt on t.t_id = rt.t_id;
+    // select * from (select * from tasks t left join (select * from single_tasks where st_start_datetime between 1585725800000 and 1585735800000) as st on t.t_id = st.t_id) as tinner join recuring_tasks rt on rt.t_id = t.t_id;
+    // select * from (select * from tasks t left join (select * from single_tasks where st_start_datetime between 1585725800000 and 1585735800000) as st on t.t_id = st.t_id) as t left join (select * from recuring_tasks where rt_start_datetime between 10 and 30) as rt on rt.t_id = t.t_id;
+    // select * from (select * from recuring_tasks where rt_start_datetime between ? and ?) as rtinner join tasks t on t.t_id = rt.t_id;
+    
+    // query for single tasks - reminders
+    let query
+    if (today) {
+        query = `SELECT * FROM (SELECT * FROM single_tasks WHERE (st_start_datetime between ? and ?)) as st INNER JOIN tasks t ON t.t_id = st.t_id;`
+        database.all(query, [parseInt(start_datetime.getTime()/1000), parseInt(end_datetime.getTime()/1000)]
+        , (err, rows) => {
+            if(err) notify(err, "red")
+            else callback(rows)
+        })
+    }
+    else {
+        query = `SELECT * FROM 
+    (SELECT * FROM single_tasks WHERE (st_start_datetime <= ? AND st_status != "DONE") OR (st_start_datetime between ? and ?)) as st
+    INNER JOIN tasks t ON t.t_id = st.t_id;`
+        database.all(query, [parseInt(end_datetime.getTime()/1000), parseInt(start_datetime.getTime()/1000), parseInt(end_datetime.getTime()/1000)]
+        , (err, rows) => {
+            if(err) notify(err, "red")
+            else callback(rows)
+        })
+    }
+}
+
+function populateTasks(rows) {
+    if(!rows) return
     let allDayTasks = document.getElementById('tasks-all-day')
     let normalTasks = document.getElementById("tasks-normal")
     let normalTasksList = []
     let allDayTasksList = []
     allDayTasks.innerHTML = ""
     normalTasks.innerHTML = ""
-    // 3 table join:
-    // select * from tasks t left join single_tasks st on t.t_id = st.t_id left join recuring_tasks rt on t.t_id = rt.t_id;
-    // select * from (select * from tasks t left join (select * from single_tasks where st_start_datetime between 1585725800000 and 1585735800000) as st on t.t_id = st.t_id) as tinner join recuring_tasks rt on rt.t_id = t.t_id;
-    // select * from (select * from tasks t left join (select * from single_tasks where st_start_datetime between 1585725800000 and 1585735800000) as st on t.t_id = st.t_id) as t left join (select * from recuring_tasks where rt_start_datetime between 10 and 30) as rt on rt.t_id = t.t_id;
-    // select * from (select * from recuring_tasks where rt_start_datetime between ? and ?) as rtinner join tasks t on t.t_id = rt.t_id;
-
-    // query for single tasks - reminders
-    await database.all(`SELECT * FROM 
-        (SELECT * FROM single_tasks WHERE (st_start_datetime <= ? AND st_status != "DONE") OR (st_start_datetime between ? and ?)) as st
-        INNER JOIN tasks t ON t.t_id = st.t_id;
-    `, [parseInt(end_datetime.getTime()/1000), parseInt(start_datetime.getTime()/1000), parseInt(end_datetime.getTime()/1000)]
-    , async (err, rows) => {
-        if(err) notify(err, "red")
-        if(!rows) return
-        await rows.forEach((row, index) => {
-            let temp = document.getElementById('task-template').cloneNode(true)
-            temp.children[0].innerHTML = row.t_name
-            temp.children[1].innerHTML = row.st_status
-            temp.classList.add('reminder-task')
-            temp.t_id = row.t_id
-            temp.t_type = row.t_type
-            temp.children[0].t_id = row.t_id; temp.children[0].t_type = row.t_type;
-            temp.children[1].t_id = row.t_id; temp.children[1].t_type = row.t_type;
-            temp.onclick = (mouseEvent) => {showEditOverlay(mouseEvent.target)}
-            if(row.st_start_datetime == row.st_end_datetime)
-                normalTasksList.push(temp)
-            else
-                allDayTasksList.push(temp)
-        })
-        await allDayTasksList.sort((a, b) => {
-            if (a.st_start_datetime > b.st_start_datetime) return 1
-            else return -1
-        })
-        await normalTasksList.sort((a, b) => {
-            if (a.st_start_datetime > b.st_start_datetime) return 1
-            else return -1
-        })
-        allDayTasks.innerHTML = "<h4>Tasks (all day):</h4>"
-        normalTasks.innerHTML = "<h4>Tasks (time specific):</h4>"
-        await allDayTasksList.forEach((value, index) => allDayTasks.append(value))
-        await normalTasksList.forEach((value, index) => normalTasks.append(value))
+    rows.forEach((row, index) => {
+        let temp = document.getElementById('task-template').cloneNode(true)
+        temp.children[0].innerHTML = row.t_name
+        temp.children[1].innerHTML = row.st_status
+        temp.classList.add('reminder-task')
+        temp.t_id = row.t_id
+        temp.t_type = row.t_type
+        temp.children[0].style.pointerEvents = "none"
+        temp.children[1].style.pointerEvents = "none"
+        temp.onclick = (mouseEvent) => {showEditOverlay(mouseEvent.target)}
+        if(row.st_start_datetime == row.st_end_datetime)
+            normalTasksList.push(temp)
+        else
+            allDayTasksList.push(temp)
     })
+    allDayTasksList.sort((a, b) => {
+        if (a.st_start_datetime > b.st_start_datetime)
+            return 1;
+        else
+            return -1;
+    })
+    normalTasksList.sort((a, b) => {
+        if (a.st_start_datetime > b.st_start_datetime)
+            return 1;
+        else
+            return -1;
+    })
+    allDayTasks.innerHTML = "<h4>Tasks (all day):</h4>"
+    normalTasks.innerHTML = "<h4>Tasks (time specific):</h4>"
+    allDayTasksList.forEach((value, index) => allDayTasks.append(value))
+    normalTasksList.forEach((value, index) => normalTasks.append(value))
+}
+
+function dateSelected(year, month, date) {
+    document.querySelector("#iDate").innerHTML = dateToText(date) + " " + monthToText(month)
+    window.localStorage.setItem('selectedDate', `${year}-${month+1}-${date}`)
+    window.localStorage.setItem('date', date)
+    window.localStorage.setItem('month', month)
+    window.localStorage.setItem('year', year)
+    fetchTasks(year, month, date, false, (rows) => populateTasks(rows))
 }
 
 /* Run these when use selects save */
@@ -193,7 +216,7 @@ function setNewReminder() {
                         if (err) notify(err, "red")
                         else {
                             notify("Reminder added to calendar.")
-                            hideOverlay()
+                            refreshLayout()
                             reminderBox.value = ""
                             allDayCheck.checked = false
                         }
