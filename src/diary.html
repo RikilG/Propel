@@ -195,6 +195,38 @@
             </span>
         </div>
     </div>
+    <div class="specialBox" id="diarySettingsBox">
+        <div class="title">Diary Settings</div>
+        <div class="row"><span>Name :</span><input type="text" class="textbox-long" id="tbDiaryGearName"/></div>
+        <div class="row">
+            <span class="button red-bg tooltip-parent" id="btnDiaryDelete" onclick="hideOverlay();document.getElementById('diaryDeleteConfirmBox').style.display = 'block';showOverlay(5)">
+                <img class="icon" src="icons/trash.png" />
+                <div class="tooltip">Delete Diary</div>
+                <div style="margin-left: 3%;">Delete</div>
+            </span>
+            <span class="button green-bg tooltip-parent" id="btnEntryEdit" onclick="saveDiary()">
+                <img class="icon" src="icons/save.png" />
+                <div class="tooltip">Save Diary</div>
+                <div style="margin-left: 10%;">Save</div>
+            </span>
+        </div>
+    </div>
+    <div class="specialBox" id="diaryDeleteConfirmBox">
+        <div class="title">Do you really want to delete this diary <b>and its contents</b>? <em>This action cannot be Undone!</em></div>
+        <div class="row"><span>Type the diary name to confirm: </span><input type="text" class="textbox-long" id="tbDiaryDelConfirm"/></div>
+        <div class="row">
+            <span class="button red-bg tooltip-parent" id="btnEntryDelete" onclick="deleteDiary()">
+                <img class="icon" src="icons/trash.png" />
+                <div class="tooltip">Yes, Delete Diary</div>
+                <div style="margin-left: 3%;">Yes</div>
+            </span>
+            <span class="button green-bg tooltip-parent" id="btnEntryEdit" onclick="hideOverlay()">
+                <img class="icon" src="icons/book2.png" />
+                <div class="tooltip">No, Keep Diary</div>
+                <div style="margin-left: 10%;">No</div>
+            </span>
+        </div>
+    </div>
 
     <!-- Templates -->
     <div id="diary-entry-template">

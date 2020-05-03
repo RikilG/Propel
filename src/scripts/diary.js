@@ -3,6 +3,7 @@ const diarydb = process.cwd() + '/database/diaries'
 
 const fs = require('fs')
 const os = require('os')
+const rimraf = require('rimraf')
 const sep = (os.platform()==='win32')?`\\`:`/`;
 
 let diaryList = []
@@ -38,7 +39,7 @@ function loadDiaryProps() {
 function diarySelected(diaryDiv) {
     let diaryName = selectedDiary
     if(diaryDiv) {
-        diaryName = diaryDiv.innerHTML
+        diaryName = diaryDiv.innerText
         document.querySelectorAll('.yellow-bg').forEach((element, index) => element.classList.remove('yellow-bg'))
         diaryDiv.classList.add('yellow-bg')
     }
@@ -67,7 +68,18 @@ function listDiaries() {
         temp.classList.add('diary-list-item')
         temp.classList.add('green-bg')
         temp.innerHTML = dirname
-        temp.onclick = (mouseEvent) => diarySelected(mouseEvent.target);
+        temp.onclick = (mouseEvent) => diarySelected(mouseEvent.target)
+        let gear = document.createElement('div')
+        gear.classList.add('diary-entry-settings')
+        gear.addEventListener('click', (me) => {
+            showOverlay(5)
+            document.getElementById('diarySettingsBox').style.display = "block"
+            selectedDiary = me.target.parentNode.innerText
+            document.getElementById('tbDiaryGearName').value = me.target.parentNode.innerText
+            diarySelected()
+            me.stopPropagation()
+        })
+        temp.append(gear)
         diaryListViewer.appendChild(temp)
         diaryList.push(dirname)
     })
@@ -136,6 +148,30 @@ function createDiary() {
             })
         }
     })
+}
+
+function deleteDiary() {
+    let sanityCheck = document.getElementById('tbDiaryDelConfirm').value
+    if(sanityCheck != selectedDiary) return notify("Please enter the correct name to the diary to delete.")
+    rimraf.sync(diarydb+sep+selectedDiary)
+    hideOverlay()
+    listDiaries()
+    document.getElementById('diary-entries-content').innerHTML = ""
+    document.getElementById('diary-entries-header').innerHTML = "Let's start writing!"
+}
+
+function saveDiary() {
+    let newName = document.getElementById('tbDiaryGearName').value
+    if (newName == "") return notify("You wouldn't leave your dear diary unnamed, do you?")
+    document.getElementById('tbDiaryGearName').value = ""
+    let props = JSON.parse(fs.readFileSync(diarydb+sep+selectedDiary+sep+"props.json"))
+    props.diaryName = newName
+    fs.writeFileSync(diarydb+sep+selectedDiary+sep+"props.json", JSON.stringify(props))
+    fs.renameSync(diarydb+sep+selectedDiary, diarydb+sep+newName)
+    selectedDiary = newName
+    hideOverlay()
+    listDiaries()
+    diarySelected()
 }
 
 function newEntry() {

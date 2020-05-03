@@ -15,6 +15,7 @@
     "electron-builder": "^22.4.1"
   },
   "dependencies": {
+    "rimraf": "^3.0.2",
     "sqlite3": "^4.1.1"
   }
 }
