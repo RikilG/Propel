@@ -2,6 +2,6 @@
 
 - [x] Add delete diary option
 - [x] Interface to change diary options
-- [ ] Default cursor positioning in textboxes and default action for enter key
-- [ ] Start ToDo in calendar
+- [x] Start ToDo in calendar
+- [x] Default cursor positioning in textboxes and default action for enter key
 - [ ] Right click context menu

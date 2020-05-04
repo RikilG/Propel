@@ -48,44 +48,6 @@ function toggleTimeTb(id) {
     }
 }
 
-/* Run these functions when user clicks/edits previous tasks */
-function showEditOverlay(taskDiv) {
-    switch(taskDiv.t_type) {
-        case types.REMINDER: showOverlay(5);editReminderOverlay(taskDiv.t_id); break;
-    }
-}
-
-async function editReminderOverlay(t_id) {
-    document.getElementById('editReminderBox').style.display = "block"
-    await database.get(`SELECT * FROM (SELECT * FROM tasks t WHERE t.t_id=?) as t LEFT JOIN single_tasks st ON t.t_id=st.t_id LEFT JOIN recuring_tasks rt ON t.t_id = rt.t_id;`
-    , [t_id], (err, row) => {
-        if (err) notify(err, "red")
-        let reminderBox = document.getElementById('tbReminderTitleEdit')
-        let dateTb = document.getElementById("reminderDateTb-edit")
-        let timeHTb = document.getElementById("reminderTimeHTb-edit")
-        let timeMTb = document.getElementById("reminderTimeMTb-edit")
-        let allDayCheck = document.getElementById("reminderAllDay-edit")
-        let datetime = new Date(row.st_start_datetime*1000)
-        reminderBox.value = row.t_name
-        reminderBox.t_id = t_id
-        dateTb.value = datetime.toDateString()
-        dateTb.disabled = true
-        timeHTb.value = `${datetime.getHours()}`
-        timeMTb.value = `${datetime.getMinutes()}`
-        if (row.st_start_datetime != row.st_end_datetime) allDayCheck.checked = true
-        else allDayCheck.checked = false
-        toggleTimeTb("reminderAllDay-edit")
-        if (row.st_status == "DONE") {
-            document.getElementById('btnReminderDone').style.display = "none"
-            document.getElementById('btnReminderSave').style.display = "none"
-        }
-        else {
-            document.getElementById('btnReminderDone').style.display = "inline"
-            document.getElementById('btnReminderSave').style.display = "inline"
-        }
-    })
-}
-
 function fetchTasks(year, month, date, today=true, callback) {
     let start_datetime = new Date(year, month, date)
     let end_datetime = new Date(year, month, date)
@@ -122,26 +84,53 @@ function fetchTasks(year, month, date, today=true, callback) {
 
 function populateTasks(rows) {
     if(!rows) return
+    let selectedDate = new Date(window.localStorage.getItem('selectedDate'))
     let allDayTasks = document.getElementById('tasks-all-day')
     let normalTasks = document.getElementById("tasks-normal")
+    let todoTasks = document.getElementById('tasks-todo')
     let normalTasksList = []
     let allDayTasksList = []
-    allDayTasks.innerHTML = ""
-    normalTasks.innerHTML = ""
+    allDayTasks.innerHTML = "<h3>Tasks (all day):</h3>"
+    normalTasks.innerHTML = "<h3>Tasks (time specific):</h3>"
+    todoTasks.innerHTML = "<h3>ToDo: </h3>"
     rows.forEach((row, index) => {
-        let temp = document.getElementById('task-template').cloneNode(true)
-        temp.children[0].innerHTML = row.t_name
-        temp.children[1].innerHTML = row.st_status
-        temp.classList.add('reminder-task')
-        temp.t_id = row.t_id
-        temp.t_type = row.t_type
-        temp.children[0].style.pointerEvents = "none"
-        temp.children[1].style.pointerEvents = "none"
-        temp.onclick = (mouseEvent) => {showEditOverlay(mouseEvent.target)}
-        if(row.st_start_datetime == row.st_end_datetime)
-            normalTasksList.push(temp)
-        else
-            allDayTasksList.push(temp)
+        let temp = document.getElementsByTagName('template')[0].content
+        if (row.t_type == types.TODO) {
+            if (row.st_end_datetime*1000 < selectedDate) return
+            temp = temp.querySelector(".todo-template").cloneNode(true)
+            temp.t_id = row.t_id
+            if (row.st_status == "DONE") {
+                temp.children[0].checked = true
+                temp.children[1].style.textDecoration = "line-through"
+                temp.children[1].style.fontStyle = "italic"
+            }
+            else {
+                temp.children[0].checked = false
+            }
+            temp.children[0].onclick = (mouseEvent) => modifyTodo(mouseEvent.target.parentNode, 'toggle')
+            temp.children[1].innerHTML = row.t_name
+            temp.children[1].onclick = (mouseEvent) => {
+                temp.children[0].checked = !temp.children[0].checked
+                modifyTodo(mouseEvent.target.parentNode, 'toggle')
+            }
+            temp.children[2].onclick = (mouseEvent) => {modifyTodo(mouseEvent.target.parentNode, 'delete')}
+            todoTasks.append(temp)
+        }
+        else {
+            temp = temp.querySelector("#task-template").cloneNode(true)
+            temp.children[0].innerHTML = row.t_name
+            temp.children[1].innerHTML = row.st_status
+            temp.classList.add('reminder-task')
+            temp.t_id = row.t_id
+            temp.t_type = row.t_type
+            temp.children[0].style.pointerEvents = "none"
+            temp.children[1].style.pointerEvents = "none"
+            temp.onclick = (mouseEvent) => {showEditOverlay(mouseEvent.target)}
+            if(row.st_start_datetime == row.st_end_datetime)
+                normalTasksList.push(temp)
+            else
+                allDayTasksList.push(temp)
+        }
     })
     allDayTasksList.sort((a, b) => {
         if (a.st_start_datetime > b.st_start_datetime)
@@ -155,8 +144,6 @@ function populateTasks(rows) {
         else
             return -1;
     })
-    allDayTasks.innerHTML = "<h4>Tasks (all day):</h4>"
-    normalTasks.innerHTML = "<h4>Tasks (time specific):</h4>"
     allDayTasksList.forEach((value, index) => allDayTasks.append(value))
     normalTasksList.forEach((value, index) => normalTasks.append(value))
 }
@@ -168,6 +155,45 @@ function dateSelected(year, month, date) {
     window.localStorage.setItem('month', month)
     window.localStorage.setItem('year', year)
     fetchTasks(year, month, date, false, (rows) => populateTasks(rows))
+}
+
+/* Run these functions when user clicks/edits previous tasks */
+function showEditOverlay(taskDiv) {
+    switch(taskDiv.t_type) {
+        case types.REMINDER: showOverlay(5);editReminderOverlay(taskDiv.t_id); break;
+    }
+}
+
+async function editReminderOverlay(t_id) {
+    document.getElementById('editReminderBox').style.display = "block"
+    await database.get(`SELECT * FROM (SELECT * FROM tasks t WHERE t.t_id=?) as t LEFT JOIN single_tasks st ON t.t_id=st.t_id LEFT JOIN recuring_tasks rt ON t.t_id = rt.t_id;`
+    , [t_id], (err, row) => {
+        if (err) notify(err, "red")
+        let reminderBox = document.getElementById('tbReminderTitleEdit')
+        let dateTb = document.getElementById("reminderDateTb-edit")
+        let timeHTb = document.getElementById("reminderTimeHTb-edit")
+        let timeMTb = document.getElementById("reminderTimeMTb-edit")
+        let allDayCheck = document.getElementById("reminderAllDay-edit")
+        let datetime = new Date(row.st_start_datetime*1000)
+        reminderBox.value = row.t_name
+        reminderBox.t_id = t_id
+        dateTb.value = datetime.toDateString()
+        dateTb.disabled = true
+        timeHTb.value = `${datetime.getHours()}`
+        timeMTb.value = `${datetime.getMinutes()}`
+        if (row.st_start_datetime != row.st_end_datetime) allDayCheck.checked = true
+        else allDayCheck.checked = false
+        toggleTimeTb("reminderAllDay-edit")
+        if (row.st_status == "DONE") {
+            document.getElementById('btnReminderDone').style.display = "none"
+            document.getElementById('btnReminderSave').style.display = "none"
+        }
+        else {
+            document.getElementById('btnReminderDone').style.display = "inline"
+            document.getElementById('btnReminderSave').style.display = "inline"
+        }
+    })
+    document.getElementById('tbReminderTitleEdit').focus()
 }
 
 /* Run these when use selects save */
@@ -238,7 +264,30 @@ function setNewNotes() {
 }
 
 function setNewTodo() {
-
+    let date = window.localStorage.getItem('selectedDate')
+    let todoBox = document.getElementById('tbNewTodo')
+    let todo = todoBox.value
+    let sdatetime = new Date(date)
+    if (todo == "") return notify("You want ToDo nothing?!")
+    database.run(`INSERT INTO tasks 
+        values (NULL, ?, NULL, (SELECT ty_id from types where ty_name=?), 1);`, // TODO: 1 is for default profile
+        [todo, "todo"], 
+        function(err) {
+            if (err) return notify(err, "red")
+            let lastid = this.lastID
+            database.run(`INSERT INTO single_tasks values(NULL, ?, ?, ?, "PENDING");`, // pending reminder
+                [lastid, parseInt(sdatetime.getTime()/1000), parseInt(sdatetime.getTime()/1000)], // id, start datetime, end datetime
+                function(err) {
+                    if (err) notify(err, "red")
+                    else {
+                        notify("Todo added to calendar.")
+                        refreshLayout()
+                        todoBox.value = ""
+                    }
+                }
+            )
+        }
+    )
 }
 
 function setNewGoal() {
@@ -314,6 +363,26 @@ function modifyReminder(command) {
     }
 }
 
+function modifyTodo(target, operation) {
+    if (operation == "toggle") {
+        let checked = target.children[0].checked
+        let status = (checked)?"DONE":"PENDING"
+        database.run(`UPDATE single_tasks SET st_status=? WHERE t_id=?;`, [status, target.t_id], (err) => {
+            if (err) notify(err, "red")
+            else refreshLayout()
+        })
+    }
+    else if (operation == "delete") {
+        database.run(`DELETE FROM single_tasks WHERE t_id=?;`, [target.t_id], (err) => {
+            if (err) notify(err, "red")
+            else database.run(`DELETE FROM tasks WHERE t_id=?;`, [target.t_id], (err) => {
+                if (err) notify(err, "red")
+                else refreshLayout()
+            })
+        })
+    }
+}
+
 /* Run these functions when user opens their corresponding overlays */
 function initReminderOverlay() {
     let ls = window.localStorage
@@ -327,6 +396,7 @@ function initReminderOverlay() {
     timeMTb.value = `${datetime.getMinutes()}`
     document.getElementById("reminderAllDay-new").checked = false
     toggleTimeTb("reminderAllDay-new")
+    document.getElementById('tbReminderTitleNew').focus()
 }
 
 function initEventOverlay() {
@@ -338,9 +408,24 @@ function initNotesOverlay() {
 }
 
 function initTodoOverlay() {
-
+    document.getElementById('tbNewTodo').focus();
 }
 
 function initGoalOverlay() {
 
 }
+
+function addListeners() {
+    document.getElementById('tbNewTodo').addEventListener('keyup', (e) => {
+        if(e.key == "Enter") document.getElementById('btnNewTodo').click()
+    })
+    document.getElementById('tbReminderTitleNew').addEventListener('keyup', (e) => {
+        if (e.key == "Enter") document.getElementById("btnNewReminder").click()
+    })
+    document.getElementById('tbReminderTitleEdit').addEventListener('keyup', (e) => {
+        if (e.key == "Enter") document.getElementById('btnReminderSave').click()
+    })
+}
+
+
+addListeners() // run and apply all listeners!

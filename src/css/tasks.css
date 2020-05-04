@@ -4,11 +4,7 @@
     cursor: pointer;
 }
 
-#task-template-text {
-
-}
-
-#task-template-status {
+.task-template-status {
     font-style: italic;
     position: absolute;
     right: 6px;
@@ -18,7 +14,7 @@
     padding: 0px 8px;
 }
 
-h4 {
+h3 {
     margin: 4px;
 }
 
@@ -37,7 +33,22 @@ h4 {
     /* background-color: rgb(243, 224, 255); */
 }
 
+.label-task {
+    /* position: absolute; */
+    overflow: hidden;
+    font-size: 0.7em;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    height: 1.2em;
+    width: 8vw;
+    padding: 4px;
+    margin: 4px 0;
+    border-radius: 0.4em;
+    pointer-events: none;
+}
+
 .reminder-task {
+    display: block;
     background-color: rgb(119, 163, 219);
     margin: 8px;
     padding: 8px;
@@ -47,4 +58,24 @@ h4 {
 
 .reminder-task:hover {
     transform: scale(1.03);
+}
+
+.todo-template {
+    display: flex;
+    justify-items: baseline;
+    justify-content: space-between;
+    margin: 5px 10px;
+}
+
+.todo-template-text {
+    font-size: 1.2em;
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.todo-template-status {
+    margin-left: 1em;
+    margin-right: 0.5em;
 }

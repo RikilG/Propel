@@ -82,12 +82,9 @@
             <div class="root-item info-container">
                 <h2 id="iDate">Today is </h2>
                 <div class="tasks">
-                    <div id="task-template">
-                        <span id="task-template-text"></span>
-                        <span id="task-template-status"></span>
-                    </div>
-                    <div id="tasks-all-day"><h4>Tasks (all day):</h4></div>
-                    <div id="tasks-normal"><h4>Tasks (time specific):</h4></div>
+                    <div id="tasks-all-day"><h3>Tasks (all day):</h3></div>
+                    <div id="tasks-normal"><h3>Tasks (time specific):</h3></div>
+                    <div id="tasks-todo"><h3>ToDo :</h3></div>
                 </div>
             </div>
         </div>
@@ -107,7 +104,7 @@
             </div>
             <!-- <div class="row"><span class="label" >Repeat :</span><input type="text" class="textbox" /></div> -->
             <div class="row"><div><input type="checkbox" id="reminderAllDay-new" onclick="toggleTimeTb('reminderAllDay-new')"/><span>All Day</span></div></div>
-            <div class="row"><span class="button" onclick="setNewReminder()">Save</span></div>
+            <div class="row"><span id="btnNewReminder" class="button" onclick="setNewReminder()">Save</span></div>
             <div class="description">
                 Set reminders when you want to be reminded of something. Unlike events, 
                 reminders will carry forward to next day if they are not checked-off.
@@ -129,8 +126,10 @@
             </div>
         </div>
         <div class="specialBox" id="newTodoBox">
-            <div class="title" >Make ToDo</div>
+            <div class="title" >Make a ToDo</div>
             <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
+            <input type="text" class="textbox-main" id="tbNewTodo" placeholder="Do ... Today?" />
+            <div class="row"><span id="btnNewTodo" class="button" onclick="setNewTodo()">Im'ma gonna do it.</span></div>
             <div class="description">
                 A traditional To-Do list for a set of tasks to be performed on a day.
             </div>
@@ -195,6 +194,19 @@
             </span>
         </div>
     </div>
+
+    <!-- Templates -->
+    <template>
+        <div id="task-template">
+            <span class="task-template-text"></span>
+            <span class="task-template-status"></span>
+        </div>
+        <div class="todo-template">
+            <input type="checkbox" class="checkbox todo-template-status" />
+            <span class="todo-template-text"></span>
+            <img src="icons/trash.png" class="icon-small" />
+        </div>
+    </template>
     
     <!-- Load home.html scripts. (Order matters!) -->
     <script src="scripts/tasks.js"></script>

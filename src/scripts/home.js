@@ -100,12 +100,22 @@ function buildCalendar(datetime) {
         }
         let tempDateDiv = document.createElement('div')
         tempDateDiv.innerHTML = i
+        tempDateDiv.style.textAlign = "center"
+        tempDateDiv.style.pointerEvents = "none"
         temp.append(tempDateDiv)
         fetchTasks(year, month, i, true, (rows) => {
+            let todoAdded = false
             rows.forEach((row, value) => {
                 let x = document.createElement('div')
-                x.classList.add('calendar-overlay-task')
                 x.innerHTML = row.t_name
+                x.classList.add('label-task')
+                if (row.t_type == types.REMINDER) x.classList.add('blue-bg')
+                if (row.t_type == types.TODO) {
+                    if (todoAdded) return
+                    todoAdded = true
+                    x.innerHTML = "Todo list"
+                    x.classList.add('red-bg')
+                }
                 temp.append(x)
             })
         })
@@ -243,11 +253,19 @@ function changeMonth() {
     document.querySelector(".calendar-week-days").style.display = "none"
     let currentMonth = window.localStorage.getItem('month')
     calendar.innerHTML = ""
+    let row = document.createElement('div')
+    row.classList.add('calendar-row')
     for(let x=0;x<12;x++) {
+        if (x == 7) {
+            calendar.append(row)
+            row = document.createElement('div')
+            row.classList.add('calendar-row')
+        }
         let temp = document.createElement('div')
         temp.classList.add('calendar-item')
         temp.innerHTML = monthToText(x)
         temp.style.fontSize = "21px"
+        temp.style.textAlign = "center"
         temp.month = x
         if(x == currentMonth) temp.classList.add('green-bg')
         temp.onclick = (mouseEvent) => {
@@ -256,13 +274,14 @@ function changeMonth() {
             yearSelection = false
             buildCalendar(datetime)
         }
-        calendar.append(temp)
+        row.append(temp)
     }
     for(let i=0;i<2;i++) {
         let temp1 = document.createElement('div')
         temp1.classList.add('calendar-item')
-        calendar.append(temp1)
+        row.append(temp1)
     }
+    calendar.append(row)
 }
 
 function changeYear() {
@@ -272,12 +291,20 @@ function changeYear() {
     calendar.innerHTML = ""
     let currentYear = window.localStorage.getItem('year')
     let startYear = currentYear - 17
+    let row = document.createElement('div')
+    row.classList.add('calendar-row')
     for(let i=startYear;i<startYear+35;i++) {
+        if ((i - startYear) % 7 == 0 && (i-startYear) != 0) {
+            calendar.append(row)
+            row = document.createElement('div')
+            row.classList.add('calendar-row')
+        }
         let temp = document.createElement('div')
         temp.classList.add('calendar-item')
         if (i==new Date().getFullYear()) temp.classList.add('green-bg')
         temp.innerHTML = i
         temp.style.fontSize = "21px"
+        temp.style.textAlign = "center"
         temp.year = i
         temp.onclick = (mouseEvent) => {
             let yearEvent = mouseEvent.target
@@ -287,8 +314,9 @@ function changeYear() {
             document.querySelector(".calendar-year").innerHTML = i
             changeMonth()
         }
-        calendar.append(temp)
+        row.append(temp)
     }
+    calendar.append(row)
 }
 
 var datetime = new Date() // get todays date
