@@ -5,7 +5,7 @@ What are the requirements to be satisfied by the end product?
 
 ## Basic Requirements
 Core requirements which need more attention
- - [ ] Scheduler - Ability to write To-Do's for each day
+ - [x] Scheduler - Ability to write To-Do's for each day
  - [ ] Scheduler - Ability to plan out a complete day's work
  - [ ] Scheduler - Setting up events, alarms, remainders for each day
  - [ ] Scheduler - Ability to support recuring tasks

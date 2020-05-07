@@ -32,3 +32,8 @@
 .orange-bg:hover {
     background-color: rgb(255, 155, 61)
 }
+
+.brown-bg,
+.brown-bg:hover {
+    background-color: rgb(231, 132, 93);
+}

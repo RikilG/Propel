@@ -81,8 +81,8 @@
             <input type="text" class="textbox-main" id="tbDiaryTitleNew" placeholder="Diary name" />
             <div class="row"><div><input type="checkbox" class="checkbox" id="chkEncryptedNew" onclick="toggleNewDiaryEncryption(this)" /><span>Encrypt (Store in gibberish rather than plain text so that people/dropbox can't snoop/access)</span></div></div>
             <div class="row"><div><input type="checkbox" class="checkbox" id="chkPasswordNew" onclick="toggleNewDiaryEncryption(this)" disabled /><span>Set Password (You will loose your diary if you forget it. Read NOTE in below description)</span></div></div>
-            <div class="row"><span>Password :</span><input type="password" class="textbox-long" id="tbPassNew" placeholder="Password" disabled /></div>
-            <div class="row"><span>Re-type :</span><input type="password" class="textbox-long" id="tbPassNewR" placeholder="Retype Password" disabled /></div>
+            <div class="row"><span class="label">Password :</span><input type="password" class="textbox-long" id="tbPassNew" placeholder="Password" disabled /></div>
+            <div class="row"><span class="label">Re-type :</span><input type="password" class="textbox-long" id="tbPassNewR" placeholder="Retype Password" disabled /></div>
             <div class="row"><span class="button" onclick="createDiary()">Save</span></div>
             <div class="description">
                 Create new diary or journal to hold you thoughts. It can be as crazy 
@@ -197,7 +197,7 @@
     </div>
     <div class="specialBox" id="diarySettingsBox">
         <div class="title">Diary Settings</div>
-        <div class="row"><span>Name :</span><input type="text" class="textbox-long" id="tbDiaryGearName"/></div>
+        <div class="row"><span class="label">Name :</span><input type="text" class="textbox-long" id="tbDiaryGearName"/></div>
         <div class="row">
             <span class="button red-bg tooltip-parent" id="btnDiaryDelete" onclick="hideOverlay();document.getElementById('diaryDeleteConfirmBox').style.display = 'block';showOverlay(5)">
                 <img class="icon" src="icons/trash.png" />
@@ -213,7 +213,7 @@
     </div>
     <div class="specialBox" id="diaryDeleteConfirmBox">
         <div class="title">Do you really want to delete this diary <b>and its contents</b>? <em>This action cannot be Undone!</em></div>
-        <div class="row"><span>Type the diary name to confirm: </span><input type="text" class="textbox-long" id="tbDiaryDelConfirm"/></div>
+        <div class="row"><span class="label">Type the diary name to confirm: </span><input type="text" class="textbox-long" id="tbDiaryDelConfirm"/></div>
         <div class="row">
             <span class="button red-bg tooltip-parent" id="btnEntryDelete" onclick="deleteDiary()">
                 <img class="icon" src="icons/trash.png" />

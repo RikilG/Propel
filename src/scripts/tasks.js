@@ -85,14 +85,17 @@ function fetchTasks(year, month, date, today=true, callback) {
 function populateTasks(rows) {
     if(!rows) return
     let selectedDate = new Date(window.localStorage.getItem('selectedDate'))
-    let allDayTasks = document.getElementById('tasks-all-day')
-    let normalTasks = document.getElementById("tasks-normal")
     let todoTasks = document.getElementById('tasks-todo')
-    let normalTasksList = []
-    let allDayTasksList = []
-    allDayTasks.innerHTML = "<h3>Tasks (all day):</h3>"
-    normalTasks.innerHTML = "<h3>Tasks (time specific):</h3>"
+    let allDayReminders = document.getElementById('reminders-all-day')
+    let normalReminders = document.getElementById("reminders-normal")
+    let allDayEvents = document.getElementById('events-all-day')
+    let normalEvents = document.getElementById("events-normal")
+    allDayReminders.innerHTML = "<h3>Reminders (all day):</h3>"
+    normalReminders.innerHTML = "<h3>Reminders (time specific):</h3>"
+    allDayEvents.innerHTML = "<h3> Evevnts (all day):</h3>"
+    normalEvents.innerHTML = "<h3>Events (time specific):</h3>"
     todoTasks.innerHTML = "<h3>ToDo: </h3>"
+    rows.sort((a, b) => { return (a.st_start_datetime > b.st_start_datetime)?1:-1; })
     rows.forEach((row, index) => {
         let temp = document.getElementsByTagName('template')[0].content
         if (row.t_type == types.TODO) {
@@ -117,6 +120,7 @@ function populateTasks(rows) {
             todoTasks.append(temp)
         }
         else {
+            if (row.t_type == types.EVENT && row.st_end_datetime*1000 < selectedDate) return
             temp = temp.querySelector("#task-template").cloneNode(true)
             temp.children[0].innerHTML = row.t_name
             temp.children[1].innerHTML = row.st_status
@@ -126,26 +130,21 @@ function populateTasks(rows) {
             temp.children[0].style.pointerEvents = "none"
             temp.children[1].style.pointerEvents = "none"
             temp.onclick = (mouseEvent) => {showEditOverlay(mouseEvent.target)}
-            if(row.st_start_datetime == row.st_end_datetime)
-                normalTasksList.push(temp)
-            else
-                allDayTasksList.push(temp)
+            if (row.st_start_datetime == row.st_end_datetime) {
+                if (row.t_type == types.REMINDER) normalReminders.append(temp)
+                else if (row.t_type == types.EVENT) normalEvents.append(temp)
+            }
+            else {
+                if (row.t_type == types.REMINDER) allDayReminders.append(temp)
+                else if (row.t_type == types.EVENT) allDayEvents.append(temp)
+            }
         }
     })
-    allDayTasksList.sort((a, b) => {
-        if (a.st_start_datetime > b.st_start_datetime)
-            return 1;
-        else
-            return -1;
-    })
-    normalTasksList.sort((a, b) => {
-        if (a.st_start_datetime > b.st_start_datetime)
-            return 1;
-        else
-            return -1;
-    })
-    allDayTasksList.forEach((value, index) => allDayTasks.append(value))
-    normalTasksList.forEach((value, index) => normalTasks.append(value))
+    if (allDayReminders.children.length == 1) allDayReminders.innerHTML = ""
+    if (normalReminders.children.length == 1) normalReminders.innerHTML = ""
+    if (allDayEvents.children.length == 1) allDayEvents.innerHTML = ""
+    if (normalEvents.children.length == 1) normalEvents.innerHTML = ""
+    if (todoTasks.children.length == 1) todoTasks.innerHTML = ""
 }
 
 function dateSelected(year, month, date) {
@@ -161,6 +160,7 @@ function dateSelected(year, month, date) {
 function showEditOverlay(taskDiv) {
     switch(taskDiv.t_type) {
         case types.REMINDER: showOverlay(5);editReminderOverlay(taskDiv.t_id); break;
+        case types.EVENT: showOverlay(5);editEventOverlay(taskDiv.t_id); break;
     }
 }
 
@@ -196,7 +196,39 @@ async function editReminderOverlay(t_id) {
     document.getElementById('tbReminderTitleEdit').focus()
 }
 
+async function editEventOverlay(t_id) {
+    document.getElementById('editEventBox').style.display = "block"
+    await database.get(`SELECT * FROM (SELECT * FROM tasks t WHERE t.t_id=?) as t LEFT JOIN single_tasks st ON t.t_id=st.t_id LEFT JOIN recuring_tasks rt ON t.t_id = rt.t_id;`
+    , [t_id], (err, row) => {
+        if (err) notify(err, "red")
+        let eventBox = document.getElementById('tbEventTitleEdit')
+        let dateTb = document.getElementById("eventDateTb-edit")
+        let timeHTb = document.getElementById("eventTimeHTb-edit")
+        let timeMTb = document.getElementById("eventTimeMTb-edit")
+        let allDayCheck = document.getElementById("eventAllDay-edit")
+        let datetime = new Date(row.st_start_datetime*1000)
+        eventBox.value = row.t_name
+        eventBox.t_id = t_id
+        dateTb.value = datetime.toDateString()
+        dateTb.disabled = true
+        timeHTb.value = `${datetime.getHours()}`
+        timeMTb.value = `${datetime.getMinutes()}`
+        if (row.st_start_datetime != row.st_end_datetime) allDayCheck.checked = true
+        else allDayCheck.checked = false
+        toggleTimeTb("reminderAllDay-edit")
+        if (row.st_status == "DONE") {
+            document.getElementById('btnEventSave').style.display = "none"
+        }
+        else {
+            document.getElementById('btnEventSave').style.display = "inline"
+        }
+    })
+    document.getElementById('tbEventTitleEdit').focus()
+}
+
 /* Run these when use selects save */
+// TODO: Write a simple which abstracts adding tasks to database. look at new reminder and new event functions which use
+// same type of database query!
 function setNewReminder() {
     let dateTb = window.localStorage.getItem('selectedDate')
     let timeHTb = parseInt(document.getElementById("reminderTimeHTb").value)
@@ -206,57 +238,95 @@ function setNewReminder() {
     if (reminderBox.value == "") {
         reminderBox.style.borderBottom = "solid red 4px"
         reminderBox.style.backgroundColor = "rgba(255, 150, 150, 0.80)"
-        notify("Reminder for what? (fill in the empty field!)", "red")
-        return
+        return notify("Reminder for what? (fill in the empty field!)", "red")
     }
     if (!allDayCheck.checked && (!timeHTb || !timeMTb || timeHTb > 23 || timeHTb < 0 || timeMTb > 59 || timeMTb < 0)) {
-        notify("Time appears to be wrong. (please enter a valid value)", "red")
-        return
+        return notify("Time appears to be wrong. (please enter a valid value)", "red")
     }
     let sdatetime = new Date(dateTb)
     sdatetime.setHours(timeHTb)
     sdatetime.setMinutes(timeMTb)
     let edatetime = sdatetime
-    database.serialize(() => {
-        database.run(`INSERT INTO tasks 
-            values (NULL, ?, NULL, (SELECT ty_id from types where ty_name=?), 1);`, // TODO: 1 is for default profile
-            [reminderBox.value, "reminder"], 
-            function(err) {
-                if (err) {
-                    notify(err, "red")
-                    return
-                }
-                let lastid = this.lastID
-                if (allDayCheck.checked) { // if all day
-                    sdatetime.setHours(0)
-                    sdatetime.setMinutes(0)
-                    sdatetime.setSeconds(0)
-                    edatetime = new Date(sdatetime)
-                    edatetime.setHours(23)
-                    edatetime.setMinutes(59)
-                    edatetime.setSeconds(59)
-                }
-                database.run(`INSERT INTO single_tasks values(NULL, ?, ?, ?, "PENDING");`, // pending reminder
-                    [lastid, parseInt(sdatetime.getTime()/1000), parseInt(edatetime.getTime()/1000)], // id, start datetime, end datetime
-                    function(err) {
-                        if (err) notify(err, "red")
-                        else {
-                            notify("Reminder added to calendar.")
-                            refreshLayout()
-                            reminderBox.value = ""
-                            allDayCheck.checked = false
-                        }
-                    }
-                )
+    database.run(`INSERT INTO tasks 
+        values (NULL, ?, NULL, ?, 1);`, // TODO: 1 is for default profile
+        [reminderBox.value, types.REMINDER], 
+        function(err) {
+            if (err) return notify(err, "red")
+            let lastid = this.lastID
+            if (allDayCheck.checked) { // if all day
+                sdatetime.setHours(0)
+                sdatetime.setMinutes(0)
+                sdatetime.setSeconds(0)
+                edatetime = new Date(sdatetime)
+                edatetime.setHours(23)
+                edatetime.setMinutes(59)
+                edatetime.setSeconds(59)
             }
-        )
-    })
-
+            database.run(`INSERT INTO single_tasks values(NULL, ?, ?, ?, "PENDING");`, // pending reminder
+                [lastid, parseInt(sdatetime.getTime()/1000), parseInt(edatetime.getTime()/1000)], // id, start datetime, end datetime
+                function(err) {
+                    if (err) notify(err, "red")
+                    else {
+                        notify("Reminder added to calendar.")
+                        refreshLayout()
+                        reminderBox.value = ""
+                        allDayCheck.checked = false
+                    }
+                }
+            )
+        }
+    )
     setTimeout(() => dateSelected(sdatetime.getFullYear(), sdatetime.getMonth(), sdatetime.getDate()), 500);
 }
 
-function setNewEvent() {
-
+function setNewEvent() {npm 
+    let dateTb = window.localStorage.getItem('selectedDate')
+    let timeHTb = parseInt(document.getElementById("eventTimeHTb").value)
+    let timeMTb = parseInt(document.getElementById("eventTimeMTb").value)
+    let eventBox = document.getElementById('tbEventTitleNew')
+    let allDayCheck = document.getElementById("eventAllDay-new")
+    if (eventBox.value == "") { // TODO: add class for red/error box, also in setNewReminder method
+        eventBox.style.borderBottom = "solid red 4px"
+        eventBox.style.backgroundColor = "rgba(255, 150, 150, 0.80)"
+        return notify("No Event? (fill in the empty field!)", "red")
+    }
+    if (!allDayCheck.checked && (!timeHTb || !timeMTb || timeHTb > 23 || timeHTb < 0 || timeMTb > 59 || timeMTb < 0)) {
+        return notify("Time appears to be wrong. (please enter a valid value)", "red")
+    }
+    let sdatetime = new Date(dateTb)
+    sdatetime.setHours(timeHTb)
+    sdatetime.setMinutes(timeMTb)
+    let edatetime = sdatetime
+    database.run(`INSERT INTO tasks 
+        values (NULL, ?, NULL, ?, 1);`, // TODO: 1 is for default profile
+        [eventBox.value, types.EVENT], 
+        function(err) {
+            if (err) return notify(err, "red")
+            let lastid = this.lastID
+            if (allDayCheck.checked) { // if all day
+                sdatetime.setHours(0)
+                sdatetime.setMinutes(0)
+                sdatetime.setSeconds(0)
+                edatetime = new Date(sdatetime)
+                edatetime.setHours(23)
+                edatetime.setMinutes(59)
+                edatetime.setSeconds(59)
+            }
+            database.run(`INSERT INTO single_tasks values(NULL, ?, ?, ?, "PENDING");`, // pending event
+                [lastid, parseInt(sdatetime.getTime()/1000), parseInt(edatetime.getTime()/1000)], // id, start datetime, end datetime
+                function(err) {
+                    if (err) notify(err, "red")
+                    else {
+                        notify("Event added to calendar.")
+                        refreshLayout()
+                        eventBox.value = ""
+                        allDayCheck.checked = false
+                    }
+                }
+            )
+        }
+    )
+    setTimeout(() => dateSelected(sdatetime.getFullYear(), sdatetime.getMonth(), sdatetime.getDate()), 500);
 }
 
 function setNewNotes() {
@@ -327,10 +397,8 @@ function modifyReminder(command) {
         let allDayCheck = document.getElementById("reminderAllDay-edit").checked
         let sdatetime = new Date(dateTb.value)
         let edatetime
-        if(!allDayCheck && (!timeHTb || !timeMTb || timeHTb > 23 || timeHTb < 0 || timeMTb > 59 || timeMTb < 0)) {
-            notify("Time appears to be wrong. (please enter a valid value)", "red")
-            return
-        }
+        if(!allDayCheck && (!timeHTb || !timeMTb || timeHTb > 23 || timeHTb < 0 || timeMTb > 59 || timeMTb < 0)) 
+            return notify("Time appears to be wrong. (please enter a valid value)", "red")
         sdatetime.setHours(timeHTb)
         sdatetime.setMinutes(timeMTb)
         edatetime = sdatetime
@@ -344,10 +412,7 @@ function modifyReminder(command) {
             edatetime.setSeconds(59)
         }
         database.run(`UPDATE tasks SET t_name=? WHERE t_id=?;`, [reminderBox.value, t_id], (err) => {
-            if (err) {
-                notify(err, "red")
-                return
-            }
+            if (err) return notify(err, "red")
             database.run(`UPDATE single_tasks SET st_start_datetime=?, st_end_datetime=? WHERE t_id=?;`, [sdatetime/1000, edatetime/1000, t_id], (err) => {
                 if (err) notify(err, "red")
                 else {
@@ -357,10 +422,58 @@ function modifyReminder(command) {
             })
         })
     }
-    else {
-        notify("incorrect command: " + command, "red")
-        return
+    else return notify("incorrect command: " + command, "red")
+}
+
+function modifyEvent(command) {
+    let t_id = document.getElementById('tbEventTitleEdit').t_id
+    if (command == "delete") {
+        database.serialize(() => {
+            database.run(`DELETE FROM tasks WHERE t_id=?;`, [t_id], (err) => {if (err) notify(err, "red")})
+            .run(`DELETE FROM single_tasks WHERE t_id=?;`, [t_id], (err) => {if (err) notify(err, "red")})
+            .run(`DELETE FROM recuring_tasks WHERE t_id=?;`, [t_id], (err) => {
+                if (err) notify(err, "red")
+                else {
+                    notify("deleted reminder.")
+                    refreshLayout()
+                }
+            })
+        })
     }
+    else if (command == "save") {
+        let eventBox = document.getElementById('tbEventTitleEdit')
+        let dateTb = document.getElementById("eventDateTb-edit")
+        let timeHTb = parseInt(document.getElementById("eventTimeHTb-edit").value)
+        let timeMTb = parseInt(document.getElementById("eventTimeMTb-edit").value)
+        let allDayCheck = document.getElementById("eventAllDay-edit").checked
+        let sdatetime = new Date(dateTb.value)
+        let edatetime
+        if(!allDayCheck && (!timeHTb || !timeMTb || timeHTb > 23 || timeHTb < 0 || timeMTb > 59 || timeMTb < 0))
+            return notify("Time appears to be wrong. (please enter a valid value)", "red")
+        sdatetime.setHours(timeHTb)
+        sdatetime.setMinutes(timeMTb)
+        edatetime = sdatetime
+        if(allDayCheck) {
+            sdatetime.setHours(0)
+            sdatetime.setMinutes(0)
+            sdatetime.setSeconds(0)
+            edatetime = new Date(sdatetime)
+            edatetime.setHours(23)
+            edatetime.setMinutes(59)
+            edatetime.setSeconds(59)
+        }
+        database.run(`UPDATE tasks SET t_name=? WHERE t_id=?;`, [eventBox.value, t_id], (err) => {
+            if (err) return notify(err, "red")
+            database.run(`UPDATE single_tasks SET st_start_datetime=?, st_end_datetime=? WHERE t_id=?;`, [sdatetime/1000, edatetime/1000, t_id], (err) => {
+                if (err) notify(err, "red")
+                else {
+                    notify("saved successfully!")
+                    refreshLayout()
+                }
+            })
+        })
+    }
+    else return notify("incorrect command: " + command, "red")
 }
 
 function modifyTodo(target, operation) {
@@ -400,7 +513,18 @@ function initReminderOverlay() {
 }
 
 function initEventOverlay() {
-
+    let ls = window.localStorage
+    let dateTb = document.getElementById("eventDateTb")
+    let timeHTb = document.getElementById("eventTimeHTb")
+    let timeMTb = document.getElementById("eventTimeMTb")
+    let datetime = new Date()
+    dateTb.value = new Date(ls.getItem('year'), ls.getItem('month'), ls.getItem('date')).toDateString()
+    dateTb.disabled = true
+    timeHTb.value = `${datetime.getHours()}`
+    timeMTb.value = `${datetime.getMinutes()}`
+    document.getElementById("reminderAllDay-new").checked = false
+    toggleTimeTb("eventAllDay-new")
+    document.getElementById('tbEventTitleNew').focus()
 }
 
 function initNotesOverlay() {

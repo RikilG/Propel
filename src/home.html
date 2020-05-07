@@ -82,9 +82,11 @@
             <div class="root-item info-container">
                 <h2 id="iDate">Today is </h2>
                 <div class="tasks">
-                    <div id="tasks-all-day"><h3>Tasks (all day):</h3></div>
-                    <div id="tasks-normal"><h3>Tasks (time specific):</h3></div>
-                    <div id="tasks-todo"><h3>ToDo :</h3></div>
+                    <div class="task-block" id="reminders-all-day"><h3>Reminders (all day):</h3></div>
+                    <div class="task-block" id="reminders-normal"><h3>Reminders (time specific):</h3></div>
+                    <div class="task-block" id="events-all-day"><h3>Events (all day):</h3></div>
+                    <div class="task-block" id="events-normal"><h3>Events (time specific):</h3></div>
+                    <div class="task-block" id="tasks-todo"><h3>ToDo :</h3></div>
                 </div>
             </div>
         </div>
@@ -102,7 +104,6 @@
                 <span>MM:</span><input type="number" min="0" max="59" id="reminderTimeMTb" class="textbox-small" placeholder="MM"/>
                 </span>
             </div>
-            <!-- <div class="row"><span class="label" >Repeat :</span><input type="text" class="textbox" /></div> -->
             <div class="row"><div><input type="checkbox" id="reminderAllDay-new" onclick="toggleTimeTb('reminderAllDay-new')"/><span>All Day</span></div></div>
             <div class="row"><span id="btnNewReminder" class="button" onclick="setNewReminder()">Save</span></div>
             <div class="description">
@@ -111,8 +112,31 @@
             </div>
         </div>
         <div class="specialBox" id="newEventBox">
-            <div class="title" >Create Event</div>
+            <div class="title" >New Event</div>
             <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
+            <input type="text" class="textbox-main" id="tbEventTitleNew" placeholder="Add event for..." />
+            <div class="row"><span class="label" >Date :</span><input type="text" id="eventDateTb" class="textbox"/></div>
+            <div class="row">
+                <span class="label" >Time :</span>
+                <span>
+                <span>HH:</span><input type="number" min="0" max="23" id="eventTimeHTb" class="textbox-small" placeholder="HH"/>
+                <span>MM:</span><input type="number" min="0" max="59" id="eventTimeMTb" class="textbox-small" placeholder="MM"/>
+                </span>
+            </div>
+            <div class="row">
+                <div>
+                    <label for="repeat-dropdown" class="label" >Repeat every :</span>
+                    <select id="repeat-dropdown" name="repeat-dropdown" >
+                        <option value="norepeat">Does Not Repeat</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row"><div><input type="checkbox" id="eventAllDay-new" onclick="toggleTimeTb('eventAllDay-new')"/><span>All Day</span></div></div>
+            <div class="row"><span id="btnNewEvent" class="button" onclick="setNewEvent()">Save</span></div>
             <div class="description">
                 Set a calendar event on any particular day (ex: birthday, meeting, etc).
             </div>
@@ -121,7 +145,7 @@
             <div class="title" >Add Notes</div>
             <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
             <div class="description">
-                Too much to do/remember for a day? no problem make a note of them here 
+                Too much to do/remember for a day? no problem jot it down here 
                 in your own words. 
             </div>
         </div>
@@ -156,10 +180,9 @@
             <span>MM:</span><input type="number" min="0" max="59" id="reminderTimeMTb-edit" class="textbox-small" placeholder="MM"/>
             </span>
         </div>
-        <!-- <div class="row"><span class="label" >Repeat :</span><input type="text" class="textbox" /></div> -->
         <div class="row"><div><input type="checkbox" id="reminderAllDay-edit" onclick="toggleTimeTb('reminderAllDay-edit');"/><span>All Day</span></div></div>
         <div class="row">
-            <span class="button red-bg tooltip-parent" id="btnReminderDelete" onclick="hideOverlay();document.getElementById('deleteConfirmBox').style.display = 'block';showOverlay(5)">
+            <span class="button red-bg tooltip-parent" id="btnReminderDelete" onclick="hideOverlay();document.getElementById('deleteReminderConfirmBox').style.display = 'block';showOverlay(5)">
                 <img class="icon" src="icons/trash.png" />
                 <div class="tooltip">Delete Reminder</div>
                 <div style="margin-left: 3%;">Delete</div>
@@ -176,13 +199,58 @@
             </span>
         </div>
         <div class="description">
-            
+            You can edit your reminder here.
         </div>
     </div>
-    <div class="specialBox" id="deleteConfirmBox">
-        <div class="title">Do you really want to delete this entry? <em>This action cannot be Undone!</em></div>
+    <div class="specialBox" id="deleteReminderConfirmBox">
+        <div class="title">Do you really want to delete this reminder? <em>This action cannot be Undone!</em></div>
         <div class="row">
             <span class="button red-bg tooltip-parent" id="btnEntryDelete" onclick="modifyReminder('delete');">
+                <img class="icon" src="icons/trash.png" />
+                <div class="tooltip">Yes, Delete</div>
+                <div style="margin-left: 3%;">Yes</div>
+            </span>
+            <span class="button green-bg tooltip-parent" id="btnEntryEdit" onclick="hideOverlay()">
+                <img class="icon" src="icons/book2.png" />
+                <div class="tooltip">No, Keep</div>
+                <div style="margin-left: 10%;">No</div>
+            </span>
+        </div>
+    </div>
+    <div class="specialBox" id="editEventBox">
+        <div class="title" >Edit Event</div>
+        <a href="javascript:void(0)" class="closebtn" onclick="hideOverlay()">&times;</a>
+        <input type="text" class="textbox-main" id="tbEventTitleEdit" placeholder="Add event for..." />
+        <div class="row"><span class="label" >Date :</span><input type="text" id="eventDateTb-edit" class="textbox" /></div>
+        <div class="row">
+            <span class="label" >Time :</span>
+            <span>
+            <span>HH:</span><input type="number" min="0" max="23" id="eventTimeHTb-edit" class="textbox-small" placeholder="HH"/>
+            <span>MM:</span><input type="number" min="0" max="59" id="eventTimeMTb-edit" class="textbox-small" placeholder="MM"/>
+            </span>
+        </div>
+        <!-- <div class="row"><span class="label" >Repeat :</span><input type="text" class="textbox" /></div> -->
+        <div class="row"><div><input type="checkbox" id="eventAllDay-edit" onclick="toggleTimeTb('eventAllDay-edit');"/><span>All Day</span></div></div>
+        <div class="row">
+            <span class="button red-bg tooltip-parent" id="btnEventDelete" onclick="hideOverlay();document.getElementById('deleteEventConfirmBox').style.display = 'block';showOverlay(5)">
+                <img class="icon" src="icons/trash.png" />
+                <div class="tooltip">Delete Event</div>
+                <div style="margin-left: 3%;">Delete</div>
+            </span>
+            <span class="button blue-bg tooltip-parent" id="btnEventSave" onclick="modifyEvent('save');">
+                <img class="icon" src="icons/save.png" />
+                <div class="tooltip">Save</div>
+                <div style="margin-left: 10%;">Save</div>
+            </span>
+        </div>
+        <div class="description">
+            you can edit your event here.
+        </div>
+    </div>
+    <div class="specialBox" id="deleteEventConfirmBox">
+        <div class="title">Do you really want to delete this event? <em>This action cannot be Undone!</em></div>
+        <div class="row">
+            <span class="button red-bg tooltip-parent" id="btnEntryDelete" onclick="modifyEvent('delete');">
                 <img class="icon" src="icons/trash.png" />
                 <div class="tooltip">Yes, Delete</div>
                 <div style="margin-left: 3%;">Yes</div>

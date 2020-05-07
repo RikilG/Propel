@@ -1,3 +1,7 @@
+#iDate {
+    margin-bottom: 0;
+}
+
 #task-template {
     display: block;
     position: relative;
@@ -15,22 +19,13 @@
 }
 
 h3 {
-    margin: 4px;
+    padding: 0.3em;
+    border-top: solid 1px rgb(180, 180, 180);
 }
 
-#tasks-all-day,
-#tasks-normal {
-    padding: 8px 2px;
+.task-block {
+    padding: 0.1em 2px;
     border-radius: 0.5em;
-    margin: 4px 0px;
-}
-
-#tasks-all-day {
-    /* background-color: rgb(234, 255, 190); */
-}
-
-#tasks-normal {
-    /* background-color: rgb(243, 224, 255); */
 }
 
 .label-task {

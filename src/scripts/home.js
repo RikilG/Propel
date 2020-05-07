@@ -110,6 +110,7 @@ function buildCalendar(datetime) {
                 x.innerHTML = row.t_name
                 x.classList.add('label-task')
                 if (row.t_type == types.REMINDER) x.classList.add('blue-bg')
+                if (row.t_type == types.EVENT) x.classList.add('brown-bg')
                 if (row.t_type == types.TODO) {
                     if (todoAdded) return
                     todoAdded = true

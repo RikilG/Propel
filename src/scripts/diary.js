@@ -117,17 +117,11 @@ function createDiary() {
     let passwd = document.getElementById('tbPassNew')
     let passwdR = document.getElementById('tbPassNewR')
     let passwdHash = crypto.hash("propel")
-    if (name.value == "") {
-        notify("Invalid diary name", "red")
-        return
-    }
+    if (name.value == "") return notify("Invalid diary name", "red")
     if(encrypted && chkPasswd.checked && passwd.value != passwdR.value) return notify("Passwords do not match")
     if(encrypted && chkPasswd.checked && passwd.value == "") return notify("I can't encrypt with an empty password!")
     if(encrypted && chkPasswd.checked && passwd.value != "") passwdHash = crypto.hash(passwd.value)
-    if(fs.existsSync(diarydb+sep+name.value.capitalize())) {
-        notify('Already a diary exists with the same name.', "red")
-        return
-    }
+    if(fs.existsSync(diarydb+sep+name.value.capitalize())) return notify('Already a diary exists with the same name.', "red")
     fs.mkdir(diarydb+sep+name.value.capitalize(), (err) => {
         if(err) notify(err, "red")
         else {
