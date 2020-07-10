@@ -12,6 +12,8 @@ Core requirements which need more attention
  - [ ] Scheduler - Automated analysis of work done(schedule followed or ToDo's done) (in percentage completed)
  - [x] Diary - Maintain multiple diaries/journals
  - [ ] Notes - A rich text editor to write notes
+ - [ ] Notes - A tree explorer for notes(option for heading/sub-headings in tree)
+ - [ ] Notes - Thin right toolbar for tools
 
 
 ## Additional Requirements
@@ -21,6 +23,9 @@ Core requirements which need more attention
  - [ ] Offline availability when no internet
  - [ ] Provide sync with other popular calendars(google)
  - [ ] Notes - Highlight and save highlights
+ - [ ] Notes - Import notes from text file
+ - [ ] Notes - Support for images, highlighting and hyperlinks
+ - [ ] Notes - Support audio snippets
 
 
 ## Extra Requirements
@@ -31,4 +36,9 @@ Core requirements which need more attention
  - [ ] Refined editor for notes and diaries (colored editor for markdown and stuff...)
  - [ ] Encryption for data security (with or without password)
  - [ ] Notes - IR search, fuzzy search notes and highlights
+ - [ ] Notes - Speech to text
+ - [ ] Notes - Text to speech reader
+ - [ ] Notes - Add tags to notes for quick search
+ - [ ] Notes - Recommend tags to notes based on similar keywords to other notes
+ - [ ] Notes - Support for storing flash cards
  - [ ] Scheduler - set alarm for reminders in kde/windows/system alarm
